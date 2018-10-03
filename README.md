@@ -6,6 +6,8 @@ Classification using ML approach for English / Hebrew / Arabic data sets
 High level overview of development environment is presented on the image shown below:
 ![image](https://user-images.githubusercontent.com/5329257/46391999-40ff8500-c6e8-11e8-962b-3da09533e2fd.png)
 
+We are using RedHat Linux. For more details on the version please see the image below: 
+![image](https://user-images.githubusercontent.com/5329257/46408850-31019880-c71c-11e8-97c3-6fe222f61317.png)
 
 1.	**Download Anaconda**
 
