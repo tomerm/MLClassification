@@ -15,12 +15,6 @@ Anaconda is a free and easy-to-use environment for scientific Python.
 
 Download from  https://www.anaconda.com/download/#linux.  Use installer for Python version >= 3.6.
 
-Anaconda contains many useable packages, including scikit-learn (sklearn, as it is called from Pyton).
-Sklearn is a collection of efficient tools for data analysis and classification. It applies specific machine-learning technique ("shallow learning")  using different algorithms, like SVM, nearest neighbors, random forest, etc.
-
-See http://scikit-learn.org/stable/  
-
-
 2.	**Install Anaconda & Python**
 
 See http://docs.anaconda.com/anaconda/install/linux
@@ -36,11 +30,13 @@ See also http://docs.anaconda.com/anaconda/
 
 https://conda.io/docs/user-guide/tasks/manage-environments.html
 
-5.	**Install Deep Learning Libraries (TensorFlow & Keras)**
+After creating the new environment, few mashin learning libraries should be installed.
 
-TensorFlow is a tool for machine learning. While it contains a wide range of functionality, TensorFlow is mainly designed for deep neural network models.
+5.	**Install Mashin Learning Libraries**
 
-For installing TensorFlow, open Anaconda Prompt to type the following commands.
+**TensorFlow** is a tool for machine learning. While it contains a wide range of functionality, TensorFlow is mainly designed for deep neural network models ("deep learning").
+
+For installing TensorFlow, open Terminal to type the following commands.
 To install the CPU-only version of TensorFlow:
 
 `pip install --ignore-installed --upgrade tensorflow`
@@ -51,9 +47,29 @@ To install the GPU version of TensorFlow:
 
 See https://www.tensorflow.org/tutorials/
 
-Keras is a high-level neural networks API, written in Python and capable of running on top of TensorFlow and few other similar tools.
-For installing Keras, open Anaconda Prompt to type the following command:
+**Keras** is a high-level neural networks API, written in Python and capable of running on top of TensorFlow and few other similar tools.
+For installing Keras, open Terminal to type the following command:
 
 `pip install keras`
 
 See https://keras.io/#keras-the-python-deep-learning-library.
+
+**Sklearn** is a collection of efficient tools for data analysis and classification. It applies specific machine-learning technique ("shallow learning")  using different algorithms, like SVM, nearest neighbors, random forest, etc.
+For installing sklearn, open Terminal to type the following command:
+
+`pip install sklearn`
+
+See http://scikit-learn.org/stable/  
+
+**Gensim** is a Python library for topic modelling, document indexing and similarity retrieval with large corpora. 
+For installing gensim, open Terminal to type the following command:
+
+`pip install gensim`
+
+See https://pypi.org/project/gensim/
+
+6.  **Jupyter notebook**
+Python scripts in this project are presented in Jupyter Notebooks. Jupyter is automatically installed for base anaconda environment only. For each new envionment new install (from Navigator or from Teminal, using pip) is required.
+
+Launch notebook from example/notebooks to check, that development environment is set correctly.
+
