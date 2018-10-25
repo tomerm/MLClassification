@@ -1,0 +1,2 @@
+#### Tokenization of the input data
+Our input data is a collection of documents, containing free text. Before using them for training and testing our models, we should tokenize their contents and exclude those tokens (like articles, punctuation, conjuctions etc.) that do not matter for the classification of documents.
