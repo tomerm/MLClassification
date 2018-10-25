@@ -36,4 +36,4 @@ Output of the tagger is an array of tokens with their POS tags:
 [('مشيت', 'VBD'),('من', 'IN'),('بيتي', 'NNP'),
  ('الى', 'IN'),('المدرسة', 'DTNN'),('.', 'PUNC')]
 ``````
-This output should be additionally handled to remove punctuation, articles etc. and merge remaining tokens into text lines.
+This output should be additionally handled to remove punctuation, articles etc. and merge remaining tokens, separated by spaces, into text lines.
