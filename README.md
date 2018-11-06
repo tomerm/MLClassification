@@ -73,3 +73,48 @@ Python scripts in this project are presented in Jupyter Notebooks. Jupyter is au
 
 Launch notebook from example/notebooks to check, that development environment is set correctly.
 
+# Project file tree
+We assume that
+1. Project is cloned into user's home directory, so its root folder is `~/MLClassification`.
+2. Folder, containing inputs and outputs of the project (mostly large text files) isn't stored in the github. Its path is `~/MLClassificationData`.
+3. Folder MLClassificationData has the following structure:
+``````
+MLClassificationData
+ |
+ |==== w2v
+ |       |
+ |       |====> source     Folder containing original file(s), used for creating Word2Vec models
+ |       |
+ |       |====> target     Folder containing tokenized file(s), used for creating Word2Vec models
+ |       |
+ |       |====> models     Folder containing Word2Vec model(s) in binary mode
+ |       |
+ |       |====> vectors    Folder containing file(s) with word vectors
+ |
+ |==== train
+ |       |
+ |       |====> source     Folder containing original documents, used for model's training
+ |       |
+ |       |====> target     Folder containing tokenized documents, used for model's training
+ |       
+ |==== test
+ |       |
+ |       |====> source     Folder containing original documents, used for model's testing
+ |       |
+ |       |====> target     Folder containing tokenized documents, used for model's testing
+ |      
+ |==== work                Folder containing documents, classification of which should be predicted
+ |
+ |==== models              Folder containing models, used for document classification
+ 
+ ``````
+ *Note: If you need to work with another project file tree you should update notebooks correspondingly.*
+ 
+ # Initial data
+ You can get some files (and use them as initial data for this project) from the following links:
+ 1. [Cleaned dump of Arabic Wikipedia (source text for w2v models)](https://ibm.ent.box.com/file/344972068403)
+ 2. [Tokenized content of Arabic Wikipedia (input for training w2v models)](https://ibm.ent.box.com/file/344966829805)
+ 3. [W2V model in binary format, created on Arabic Wikipedia](https://ibm.ent.box.com/file/344964480859)
+ 4. [File of vectors, created on Arabic Wikipedia](https://ibm.ent.box.com/file/344961720796)
+ 5. [Example of the dataset containing documents, tagged by their place](https://ibm.ent.box.com/file/344961720796)
+ 
