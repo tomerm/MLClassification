@@ -116,5 +116,5 @@ MLClassificationData
  2. [Tokenized content of Arabic Wikipedia (input for training w2v models)](https://ibm.ent.box.com/file/344966829805)
  3. [W2V model in binary format, created on Arabic Wikipedia](https://ibm.ent.box.com/file/344964480859)
  4. [File of vectors, created on Arabic Wikipedia](https://ibm.ent.box.com/file/344961720796)
- 5. [Example of the dataset containing documents, tagged by their place](https://ibm.ent.box.com/file/344961720796)
+ 5. [Example of the dataset containing documents, tagged by their place](https://ibm.ent.box.com/file/344967756393)
  
