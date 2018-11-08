@@ -2,10 +2,12 @@
 Stanford Part-Of-Speech Tagger (POS Tagger) is a piece of software that reads text in some language and assigns parts of speech (such as noun, verb, adjective, etc.) to each token.
 
 ### Tokenization with Stanford POS Tagger
-Source text is splitted by sentences and tokenized by wrapper of Stanford POS Tagger (ArabicStanfordPOSTagger.jar), which uses Arabic specific model and properties. Jar itself and all related files are placed in the subfolder *taggers*.    
-To perform tokenization, launch script from notebook **Tokenization with Stanford POS Tagger** (note, that it works recursively for all files from all subfolders under the given root).    
+Source text is splitted by sentences and tokenized by wrapper of Stanford POS Tagger - **ArabicStanfordPOSTagger.jar**, which uses Arabic specific model and properties. Jar itself and all related files are placed in the subfolder *taggers*.    
+To perform tokenization, launch script from notebook **Tokenization with Stanford POS Tagger** (note, that script works recursively for all files from all subfolders under the given root).    
 Alternatively you can do tokenization for some specific file by running from the Terminal the following command:    
-`java -Xmx2048m -jar <path-to-jar>/ArabicStanfordPOSTagger.jar <input-file_name> <output-file-name>`
+`java -Xmx2048m -jar <path-to-jar>/ArabicStanfordPOSTagger.jar <input-file_name> <output-file-name>`    
+
+Alternatively tokenization can be done using another wrapper - **RecursiveStanfordPOSTagger.jar**, which is launched from notebook **Tokenization with Recursive Stanfod POS Tagger**. Unlike previous one, this jar (and not a python scipt) works recursively for all files in the given root and therefore it performs much faster when tokenization is performed for a large number of files of relatively small size.
 
 ### Tokenization with Stanford Server
 #### Install:
