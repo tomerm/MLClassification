@@ -68,6 +68,12 @@ For installing gensim, open Terminal to type the following command:
 
 See https://pypi.org/project/gensim/
 
+**Matplotlib** is a Python 2D plotting library which produces publication quality figures in a variety of hardcopy formats and interactive environments across platforms. To install, actuvate your environment and type the following command:
+
+`conda install matplotlib`
+
+See https://matplotlib.org/
+
 6.  **Jupyter notebook**
 Python scripts in this project are presented in Jupyter Notebooks. Jupyter is automatically installed for base anaconda environment only. For each new envionment new install (from Navigator or from Teminal, using pip) is required.
 
