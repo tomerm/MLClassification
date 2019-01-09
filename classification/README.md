@@ -1,4 +1,4 @@
-## Dataset proprties
+## Dataset properties
 Before creating some specific model for document classification, it is important to understand the specifics of dataset, 
 used for its training. Given a multi-label dataset, following data properties can be defined to compare different sets of data:
 1. **Distinct Label Set** is the total count of number of distinct label combinations observed in the given dataset.
@@ -30,3 +30,7 @@ list of prediction to cover all the true labels of an instance.
 that are ranked before it, and finally averages over all relevant labels.
 
 _Note: unlike other metrices, smaller value of last four means the better performance of the learning algorithm._
+
+## Comparison of models
+After creating model, we save all related data into the file with specific structure. In addition to general information, including evaluation metrices, it contains data in the context of individual categories and documents. By default this file has the same name, as the model itself and it is placed into directory ``~/MLClassificationData/modelinfo``.    
+Notebook **Comparator** can be used to create **html report** on the base of contents of all files, located in this directory. This allows to compare results of the testing, produced by different models. Example of such report (_modelCompareExample.html_) can be found in the current subfolder.
