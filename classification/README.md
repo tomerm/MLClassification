@@ -1,3 +1,9 @@
+## Prerequisites
+Before launching the notebook **Multi-label text classification with BERT(Pytorch)** for the first time, you need to install **pytorch-pretrained-BERT** in your Anaconda environment:
+```
+pip install pytorch-pretrained-BERT
+```
+
 ## Dataset properties
 Before creating some specific model for document classification, it is important to understand the specifics of dataset, 
 used for its training. Given a multi-label dataset, following data properties can be defined to compare different sets of data:
