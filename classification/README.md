@@ -3,6 +3,7 @@ Before launching the notebook **Multi-label text classification with BERT(Pytorc
 ```
 pip install pytorch-pretrained-BERT
 ```
+_Note: use **Multi-label text classification with BERT(Pytorch)2** if you can't download pre-trained pytorch models in runtime._
 
 ## Dataset properties
 Before creating some specific model for document classification, it is important to understand the specifics of dataset, 
