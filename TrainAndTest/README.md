@@ -26,8 +26,11 @@ Default parameters are defined by the options from configuration file. Each proc
 own section, but sometimes options from other sections can be used as well. If some actual parameter appears in the list, 
 its value changes the value of corresponding option. Then it is used as a default for all subsequent processes in the chain.
 
-Actual parameters in the list should be seperated by symbol ";". Name and value of each actual parameter should be separated by 
-symbol "=". Definitions of specific processes in the request should be separated by symbol "|".
+The rules of creating user's request are the following:
+- Definitions of specific processes in the request should be separated by symbol "|". 
+- Actual parameters in the list should be seperated by symbol ";". 
+- Name and value of each actual parameter should be separated by symbol "=". 
+- If value of some actual parameter is a list, items of this list should be separated by comma. 
 
 Here is the example of the request:
 
@@ -103,7 +106,7 @@ analysis | *yes*/no | Defines the need to show data set analysis.
 w2vLoad | *yes*/no | Defines if W2V model should be loaded.
 
 _Note: If W2V model will not be loaded by _DataLoader_, it will be loaded and placed into the internal cache by first 
-in the chain _Model_ process, which require word embedding.
+in the chain _Model_ process, which require word embedding._
 
 ## Model
 _Model_ is a process, which can create, train and test ML model of one of supported types. It uses the data, loaded by 
