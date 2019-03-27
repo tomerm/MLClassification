@@ -43,10 +43,11 @@ class Collector:
             self.getConsolidatedResults()
             self.getMetrics()
         if self.runtime:
-            if not os.listdir(fullPath(self.Config, "resourcespath")):
+            if len(os.listdir(fullPath(self.Config, "resourcespath"))) > 0:
                 print ("Warning: folder %s is not empty. All its content will be deleted."%(
                                 fullPath(self.Config, "resourcespath")))
                 os.makedirs(fullPath(self.Config, "resourcespath"), exist_ok=True)
+            print("\nCollect arfifacts for runtime...")
             self.saveResources()
 
 
@@ -84,7 +85,6 @@ class Collector:
             printMetrics(self)
 
     def saveResources(self):
-        print("\nPrepare runtime resources...")
         tokOpts = ["actualtoks", "normalization", "stopwords", "expos", "extrawords"]
         self.Config["resources"]["tokenization"] = {}
         ds = datetime.datetime.now()
@@ -105,7 +105,7 @@ class Collector:
         with open(self.outDir + 'config.json', 'w', encoding="utf-8") as file:
             json.dump(self.Config["resources"], file, indent=4)
         de = datetime.datetime.now()
-        print("\nResources copied into the folder %s in %s"%(fullPath(self.Config, "resourcespath"), showTime(ds, de)))
+        print("\nArtifacts are copied into the folder %s in %s"%(fullPath(self.Config, "resourcespath"), showTime(ds, de)))
 
     def copyFile(self, inPath):
         dir, name = os.path.split(inPath)
