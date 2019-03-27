@@ -1,4 +1,4 @@
-# Project "TestAndTrain"
+# Project "TrainAndTest"
 Goal of this project - provide the user with a convenient way to start the processes necessary to create ML models, used
 for multi-label document classification. Processes may be launched independently or in the chain, where previous process 
 can prepare data or set parameters for the next one. Each user's request should be configured and composed in the standard 
