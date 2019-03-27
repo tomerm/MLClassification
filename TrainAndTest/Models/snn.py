@@ -64,3 +64,6 @@ class SnnModel(BaseModel):
 
     def testModel(self):
         self.testNNModel()
+
+    def saveAdditions(self):
+        self.resources["w2v"] = "yes"

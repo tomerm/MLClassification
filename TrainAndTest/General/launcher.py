@@ -5,7 +5,7 @@ from Tokenization.tokenization import Tokenizer
 from WordEmbedding.vectors import Embedding
 from Data.data import DataLoader
 from Models.controller import ModelController
-from Models.consolidation import ConsolidatedResults
+from Models.consolidation import Collector
 from Utils.utils import defaultOptions
 
 Config = {}
@@ -28,6 +28,10 @@ def parseConfig(path):
         Config["reqid"] = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         Config["modelid"] = 0
         Config["results"] = {}
+        Config["resources"] = {}
+        Config["resources"]["reqid"] = Config["reqid"]
+        Config["resources"]["models"] = {}
+        Config["resources"]["w2v"] = {}
         Config["error"] = False
         parseRequestAndLaunchPipe(parser, Config["request"])
     except Error:
@@ -69,10 +73,9 @@ def parseRequestAndLaunchPipe(parser, req):
             Embedding(Config, DefConfig, kwargs);
         elif process == "D":  #Load data
             DefConfig = defaultOptions(parser, "data")
-            lastD = (i == len(tasks)-1)
-            DataLoader(Config, DefConfig, lastD, kwargs)
+            DataLoader(Config, DefConfig, kwargs)
         elif process == "C": #Consolidated results
-            ConsolidatedResults(Config)
+            Collector(Config)
         else:    #Model
             DefConfig = defaultOptions(parser, "model")
             ModelController(Config, DefConfig, kwargs)

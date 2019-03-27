@@ -31,7 +31,7 @@ class TokensFromTagger:
                                outPath + '" "' + Config["expos"] + '" "'+ stopWords + '" "' +
                                Config["extrawords"] + '" "' + Config["normalization"] + '"',
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        srv.wait();
+        srv.wait()
         reply = srv.communicate()
         de = datetime.datetime.now()
         print(reply[0].decode())
