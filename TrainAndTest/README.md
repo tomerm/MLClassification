@@ -18,11 +18,11 @@ Currently we support 5 types of processes. Each of them has its own symbol, by w
 - W  -  word embedding
 - D  -  data loading
 - M  -  create/train/test specific model
-- C  -  consolidate results of all models in the chain
+- C  -  collector (consolidate results of all models in the chain and/or collect artifacts for runtime)
 
 One-char sign of the process should be followed by the list of its actual parameters, enclosed in parentheses. 
 This list can be empty which means, that actual parameters are the same as default. 
-Default parameters are defined by the options from configuration file. Each process (excluding _Consolidation_) has there its
+Default parameters are defined by the options from configuration file. Each process has there its
 own section, but sometimes options from other sections can be used as well. If some actual parameter appears in the list, 
 its value changes the value of corresponding option. Then it is used as a default for all subsequent processes in the chain.
 
@@ -34,14 +34,14 @@ The rules of creating user's request are the following:
 
 Here is the example of the request:
 
-`request = D(w2vload=no) | M(type=perceptron; name=perceptron; runfor=test) | M(type=svc; name=svc) | C()`
+`request = D(w2vload=no) | M(type=perceptron; name=perceptron; runfor=test) | M(type=svc; name=svc) | C(saveResources=no)`
 
 This means: 
 - load train and test data from default folders, but not load file of word vectors;
 - load model of type and name 'perceptron' from the default folder and get its predictions for testing data, 
 loaded by the previous process;
 - do the same with the model of type and name 'svc'
-- get consolidated results.
+- get consolidated results (by default), but don't collect artifacts
 
 _Note: Configuration file additionaly contains section 'root', which doesn't belong to any process. Its option 'home'
 defines the root folder, where all related data should be placed. All other options, which defines references to different 
@@ -130,8 +130,24 @@ binarizerPath | <path> | Relative path to binarizer (saved with some specifc mod
 vectorizerPath | <path> | Relative path to vectorizer (saved with some specific models)
 bertPath | <.../pytorch_bert.gz> | Relative path to the gz file, containing pre-trained BERT model
 bertOutPath | <path> | Path to the folder with resulting BERT files
+showMetrics | yes/no | Need to show testing results (model's metrics) 
 kfold | 10 | Number of cross-validation loops
 pSize | 0.2 | Size of the testing set in each loop of cross-validation process.
 
-_Note: currently cross-validation isn't realised._
+**TBD: currently cross-validation isn't realized.**
 
+## Collector
+_Collector_ is a process which, if required, can perform the following tasks:
+- Show consolidated results of testing of all models, used in the current chain
+- Create HTML reports (**TBD**) 
+- Create configuration file and collect all artifacts, needed for launching current chain in runtime.
+
+#### Parameters
+
+Name | Possible Values | Comments
+--- | --- | ---
+showResults | yes/no | Show consolidated results
+reports | yes/no | Calculate and save reports (**TBD**)
+reportsPath | <path> | Path to the folder containing reports
+saveResources | yes/no | Collect artifacts for runtime
+resourcesPath | <path> | Path to the folder containing collected artifacts
