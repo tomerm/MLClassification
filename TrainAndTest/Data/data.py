@@ -15,7 +15,7 @@ LabeledDocument = namedtuple('LabeledDocument', 'lines words labels nlabs qLabs 
 stop_words = set(stopwords.words('arabic'))
 
 class DataLoader:
-    def __init__(self, Config, DefConfig, lastD, kwargs):
+    def __init__(self, Config, DefConfig, kwargs):
         print ("=== Loading data ===")
         updateParams(Config, DefConfig, kwargs)
         self.Config = Config
@@ -48,6 +48,14 @@ class DataLoader:
                 print("Wrong path to W2V model. Stop.")
                 Config["error"] = True
                 return
+            try:
+                self.ndim = int(self.Config["w2vdim"])
+            except ValueError:
+                print("Wrong size of vectors' dimentions. Stop.")
+                Config["error"] = True
+                return
+            self.Config["resources"]["w2v"]["modelPath"] = fullPath(Config, "w2vmodelpath")
+            self.Config["resources"]["w2v"]["ndim"] = self.ndim
             self.loadW2VModel()
         else:
             self.Config["w2vmodel"] = None

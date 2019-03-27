@@ -41,5 +41,10 @@ class PacModel(BaseModel):
     def testModel(self):
         self.testSKLModel()
 
+    def saveAdditions(self):
+        if not "vectorizer" in self.Config["resources"]:
+            self.Config["resources"]["vectorizer"] = fullPath(self.Config, "vectorizerpath")
+        self.resources["vectorizer"] = "yes"
+
 
 

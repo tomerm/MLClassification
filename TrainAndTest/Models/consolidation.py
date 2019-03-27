@@ -1,7 +1,12 @@
+import os
 import numpy
+import shutil
+import json
+import datetime
 from Models.metrics import ModelMetrics, printMetrics
+from Utils.utils import fullPath, showTime
 
-class ConsolidatedResults:
+class Collector:
     def __init__(self, Config):
         self.Config = Config
         if "testdocs" not in Config or len(Config["results"]) == 0:
@@ -15,9 +20,35 @@ class ConsolidatedResults:
         self.rankThreshold = 0.5
         self.diffThreshold = 10
         self.useProbabilities = False
-        print ("Calculate consolidated metrics...")
-        self.getConsolidatedResults()
-        self.getMetrics()
+        self.reports = False
+        self.runtime = False
+        print ("\nCalculate consolidated metrics...")
+        if len(self.Config["results"]) == 0:
+            print ("No results to consolidate them.")
+            print ("Consolidation can't be performed.")
+            return
+        if Config["reports"] == "yes":
+            if len(Config["reportspath"]) == 0 or not os.path.isdir(fullPath(Config, "reportspath")):
+                print ("Wrong path to the folder, containing reports.")
+                print ("Reports can't be created.")
+        else:
+            self.reports = True
+        if Config["saveresources"] == "yes":
+            if len(Config["resourcespath"]) == 0 or not os.path.isdir(fullPath(Config, "resourcespath")):
+                print ("Wrong path to the folder, containing resources for runtime.")
+                print ("Resources can't be saved.")
+            else:
+                self.runtime = True
+        if self.reports or self.Config["showresults"] == "yes":
+            self.getConsolidatedResults()
+            self.getMetrics()
+        if self.runtime:
+            if not os.listdir(fullPath(self.Config, "resourcespath")):
+                print ("Warning: folder %s is not empty. All its content will be deleted."%(
+                                fullPath(self.Config, "resourcespath")))
+                os.makedirs(fullPath(self.Config, "resourcespath"), exist_ok=True)
+            self.saveResources()
+
 
     def getConsolidatedResults(self):
         for key, res in self.Config["results"].items():
@@ -49,5 +80,36 @@ class ConsolidatedResults:
 
     def getMetrics(self):
         ModelMetrics(self)
-        printMetrics(self)
+        if self.Config["showresults"] == "yes":
+            printMetrics(self)
+
+    def saveResources(self):
+        print("\nPrepare runtime resources...")
+        tokOpts = ["actualtoks", "normalization", "stopwords", "expos", "extrawords"]
+        self.Config["resources"]["tokenization"] = {}
+        ds = datetime.datetime.now()
+        for i in range(len(tokOpts)):
+            self.Config["resources"]["tokenization"][tokOpts[i]] = self.Config[tokOpts[i]]
+        #print (json.dumps(self.Config["resources"]))
+        self.outDir = fullPath(self.Config, "resourcespath") + "/"
+        for key, val in self.Config["resources"]["models"].items():
+            val["modelPath"] = self.copyFile(val["modelPath"])
+        if "w2v" in self.Config["resources"]:
+            self.Config["resources"]["w2v"]["modelPath"] = self.copyFile(self.Config["resources"]["w2v"]["modelPath"])
+        if "indexer" in self.Config["resources"]:
+            self.Config["resources"]["indexer"] = self.copyFile(self.Config["resources"]["indexer"])
+        if "vectorizer" in self.Config["resources"]:
+            self.Config["resources"]["vectorizer"] = self.copyFile(self.Config["resources"]["vectorizer"])
+        if "ptBertModel" in self.Config["resources"]:
+            self.Config["resources"]["ptBertModel"] = self.copyFile(self.Config["resources"]["ptBertModel"])
+        with open(self.outDir + 'config.json', 'w', encoding="utf-8") as file:
+            json.dump(self.Config["resources"], file, indent=4)
+        de = datetime.datetime.now()
+        print("\nResources copied into the folder %s in %s"%(fullPath(self.Config, "resourcespath"), showTime(ds, de)))
+
+    def copyFile(self, inPath):
+        dir, name = os.path.split(inPath)
+        outPath = self.outDir + name
+        shutil.copy(inPath, outPath)
+        return name
 

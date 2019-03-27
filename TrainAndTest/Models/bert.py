@@ -238,7 +238,15 @@ class BertModel(BaseModel):
         self.predictions = res
         de = datetime.datetime.now()
         print("Test dataset containing %d documents predicted in %s\n" % (len(eval_examples), showTime(ds, de)))
+        self.saveResources("torch")
         self.getMetrics()
 
+    def saveResources(self, type):
+        self.resources["id"] = str(self.Config["modelid"])
+        self.resources["modelPath"] = fullPath(self.Config, "bertoutpath", opt="name")
+        self.resources["modelType"] = type
+        if not "ptBertModel" in self.Config["resources"]:
+            self.Config["resources"]["ptBertModel"] = self.arsg.bert_model
+        self.resources["ptBertModel"] = "yes"
 
 

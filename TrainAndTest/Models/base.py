@@ -20,12 +20,13 @@ class BaseModel:
         self.valLabels = []
         self.predictions = []
         self.metrics = {}
+        self.resources = {}
 
         self.epochs = int(Config["epochs"])
         self.verbose = int(Config["verbose"])
         if self.verbose != 0:
             self.verbose = 1
-        self.trainBatch = int(Config["trainbatch"]);
+        self.trainBatch = int(Config["trainbatch"])
 
     def launchProcess(self):
         if self.Config["runfor"] != "test":
@@ -59,6 +60,8 @@ class BaseModel:
         self.w2vModel = gensim.models.KeyedVectors.load_word2vec_format(fullPath(self.Config, "w2vmodelpath"))
         de = datetime.datetime.now()
         print("Load W2V model (%s) in %s" % (fullPath(self.Config, "w2vmodelpath"), showTime(ds, de)))
+        self.Config["resources"]["w2v"]["modelPath"] = fullPath(self.Config, "w2vmodelpath")
+        self.Config["resources"]["w2v"]["ndim"] = self.ndim
 
     def loadNNModel(self):
         return load_model(fullPath(self.Config, "modelpath", opt="name"))
@@ -115,7 +118,9 @@ class BaseModel:
         self.predictions = self.model.predict(self.testArrays)
         de = datetime.datetime.now()
         print("Test dataset containing %d documents predicted in %s\n" % (len(self.testArrays), showTime(ds, de)))
+        self.saveResources("keras")
         self.getMetrics()
+        self.saveResults()
 
     def testSKLModel(self):
         print ("Start testing...")
@@ -123,33 +128,25 @@ class BaseModel:
         self.predictions = self.model.predict(self.testArrays)
         de = datetime.datetime.now()
         print("Test dataset containing %d documents predicted in %s\n" % (self.testArrays.shape[0], showTime(ds, de)))
+        self.saveResources("skl")
         self.getMetrics()
         self.saveResults()
 
     def getMetrics(self):
         print ("Calculate metrics...")
         ModelMetrics(self)
-        printMetrics(self)
+        if self.Config["showmetrics"] == "yes":
+            printMetrics(self)
 
-    """
-    def printMetrics(self):
-        if len(self.metrics) == 0:
-            print ("Metrics isn't calculated yet...")
-            return
-        print ("Model's metrics:")
-        dt = self.metrics["all"]
-        print ("  General:")
-        for key, val in dt.items():
-            if key.startswith("d_") or key.startswith("dd_"):
-                print (f"    {leftAlign(metricsNames[key], 35)}   {'%5d'%val}")
-            else:
-                print (f"    {leftAlign(metricsNames[key], 35)}   {'%3.2f%%'%(val * 100)}")
-        sortedDict = sorted(self.metrics.items(), key=lambda x: x[1]["f1"], reverse=True)
-        print("\n  F1-Measure by category in descent order:")
-        for i in range(len(sortedDict)):
-            if sortedDict[i][0] != "all":
-                print (f"    {leftAlign(sortedDict[i][0], 35)}\u200e   {'%.2f%%'%(sortedDict[i][1]['f1'] * 100)}")
-    """
 
     def saveResults(self):
         self.Config["results"][self.Config["name"]] = self.predictions
+
+    def saveResources(self, type):
+        self.resources["modelPath"] = fullPath(self.Config, "modelpath", opt="name")
+        self.resources["modelType"] = type
+        self.saveAdditions()
+        self.Config["resources"]["models"]["Model" + str(self.Config["modelid"])] = self.resources
+
+    def saveAdditions(self):
+        pass
