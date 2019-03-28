@@ -19,7 +19,7 @@ class TokensFromServer:
     def __init__(self, Config):
         self.Config = Config
         self.curdir = os.getcwd()
-        if Config["servStop"] == "yes":
+        if Config["servstop"] == "yes":
             self.stopServer()
         self.startProcess = True
         self.startServer()
