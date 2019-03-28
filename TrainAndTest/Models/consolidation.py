@@ -1,6 +1,7 @@
 import os
 import numpy
 import shutil
+import pickle
 import json
 import datetime
 from Models.metrics import ModelMetrics, printMetrics
@@ -92,8 +93,13 @@ class Collector:
             self.Config["resources"]["tokenization"][tokOpts[i]] = self.Config[tokOpts[i]]
         #print (json.dumps(self.Config["resources"]))
         self.outDir = fullPath(self.Config, "resourcespath") + "/"
+        isW2VNeeded = False
         for key, val in self.Config["resources"]["models"].items():
             val["modelPath"] = self.copyFile(val["modelPath"])
+            if "w2v" in val and val["w2v"] == "yes":
+                isW2VNeeded = True
+        if isW2VNeeded:
+            self.Config["resources"].pop("w2v", None)
         if "w2v" in self.Config["resources"]:
             self.Config["resources"]["w2v"]["modelPath"] = self.copyFile(self.Config["resources"]["w2v"]["modelPath"])
         if "indexer" in self.Config["resources"]:
@@ -102,8 +108,16 @@ class Collector:
             self.Config["resources"]["vectorizer"] = self.copyFile(self.Config["resources"]["vectorizer"])
         if "ptBertModel" in self.Config["resources"]:
             self.Config["resources"]["ptBertModel"] = self.copyFile(self.Config["resources"]["ptBertModel"])
+        cNames = [''] * len(self.Config["cats"])
+        for k, v in self.Config["cats"].items():
+            cNames[v] = k
+        with open(self.outDir + 'labels.txt', 'w', encoding="utf-8") as file:
+            file.write(",".join(cNames))
+        file.close()
+        self.Config["resources"]["labels"] = "labels.txt"
         with open(self.outDir + 'config.json', 'w', encoding="utf-8") as file:
             json.dump(self.Config["resources"], file, indent=4)
+        file.close()
         de = datetime.datetime.now()
         print("\nArtifacts are copied into the folder %s in %s"%(fullPath(self.Config, "resourcespath"), showTime(ds, de)))
 
