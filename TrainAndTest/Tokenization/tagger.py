@@ -29,7 +29,8 @@ class TokensFromTagger:
         ds = datetime.datetime.now()
         srv = subprocess.Popen('java -Xmx2g -jar ' + taggerPath + ' "' + inPath +  '" "'  +
                                outPath + '" "' + Config["expos"] + '" "'+ stopWords + '" "' +
-                               Config["extrawords"] + '" "' + Config["normalization"] + '"',
+                               Config["extrawords"] + '" "' + Config["normalization"] + '" "' +
+                               Config["actualTocs"] + '"',
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         srv.wait()
         reply = srv.communicate()

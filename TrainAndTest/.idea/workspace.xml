@@ -2,22 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3acbb607-f85d-4a7f-8ba2-0256ae3bafe8" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/TrainAndTest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/TrainAndTest.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/data.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data/data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/General/launcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/General/launcher.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/bert.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/bert.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tokenizer/arabic/stanford/taggers/ArabicDocumentsTokenizer.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Models/consolidation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/consolidation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/ltsm.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/ltsm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/pac.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/pac.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/perceptron.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/perceptron.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/ridge.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/ridge.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/sgd.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/sgd.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/snn.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/snn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/svc.py" beforeDir="false" afterPath="$PROJECT_DIR$/Models/svc.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Tokenization/tagger.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tokenization/tagger.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/config.cfg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tokenization/tokenization.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tokenization/tokenization.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tokenizer/arabic/stanford/Tokenization with Stanford POS Tagger.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../tokenizer/arabic/stanford/Tokenization with Stanford POS Tagger.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tokenizer/arabic/stanford/Tokenization with Stanford Server.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../tokenizer/arabic/stanford/Tokenization with Stanford Server.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tokenizer/arabic/stanford/taggers/PyArabicTokenizer.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../tokenizer/arabic/stanford/taggers/PyArabicTokenizer.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../wordEmbedding/Merge Data.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../wordEmbedding/Merge Data.ipynb" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,19 +25,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/General/launcher.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" column="42" selection-start-line="7" selection-start-column="42" selection-end-line="7" selection-end-column="42" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Models/consolidation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="720">
-              <caret line="48" column="66" selection-start-line="48" selection-start-column="66" selection-end-line="48" selection-end-column="66" />
+            <state relative-caret-position="271">
+              <caret line="77" column="59" lean-forward="true" selection-start-line="77" selection-start-column="59" selection-end-line="77" selection-end-column="59" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -53,13 +37,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Models/base.py">
+        <entry file="file://$PROJECT_DIR$/Models/metrics.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="751">
-              <caret line="139" lean-forward="true" selection-start-line="139" selection-end-line="139" />
-              <folding>
-                <element signature="e#0#13#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="178">
+              <caret line="37" selection-start-line="34" selection-end-line="37" />
             </state>
           </provider>
         </entry>
@@ -67,8 +48,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/config.cfg">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="853">
-              <caret line="127" column="59" lean-forward="true" selection-start-line="127" selection-start-column="59" selection-end-line="127" selection-end-column="59" />
+            <state relative-caret-position="1963">
+              <caret line="135" column="92" lean-forward="true" selection-start-line="135" selection-start-column="92" selection-end-line="135" selection-end-column="92" />
             </state>
           </provider>
         </entry>
@@ -76,8 +57,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Tokenization/tokenization.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="14" column="34" selection-start-line="14" selection-start-column="34" selection-end-line="14" selection-end-column="34" />
+            <state relative-caret-position="135">
+              <caret line="9" column="34" lean-forward="true" selection-start-line="9" selection-start-column="34" selection-end-line="9" selection-end-column="34" />
               <folding>
                 <element signature="e#0#48#0" expanded="true" />
               </folding>
@@ -88,10 +69,22 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Tokenization/tagger.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="495">
-              <caret line="33" column="18" lean-forward="true" selection-start-line="33" selection-start-column="18" selection-end-line="33" selection-end-column="18" />
+            <state relative-caret-position="480">
+              <caret line="32" column="58" selection-start-line="32" selection-start-column="58" selection-end-line="32" selection-end-column="58" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Models/base.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="285">
+              <caret line="64" lean-forward="true" selection-start-line="64" selection-end-line="64" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -100,8 +93,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Tokenization/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="181">
-              <caret line="63" column="37" lean-forward="true" selection-start-line="63" selection-start-column="37" selection-end-line="63" selection-end-column="37" />
+            <state relative-caret-position="810">
+              <caret line="63" column="37" selection-start-line="63" selection-start-column="37" selection-end-line="63" selection-end-column="37" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -110,12 +103,12 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Models/snn.py">
+        <entry file="file://$PROJECT_DIR$/Models/dataPreparation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="883">
-              <caret line="62" column="27" lean-forward="true" selection-start-line="62" selection-start-column="27" selection-end-line="62" selection-end-column="27" />
+            <state relative-caret-position="526">
+              <caret line="134" column="46" lean-forward="true" selection-start-line="134" selection-start-column="46" selection-end-line="134" selection-end-column="46" />
               <folding>
-                <element signature="e#0#9#0" expanded="true" />
+                <element signature="e#0#12#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -124,8 +117,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Models/bert.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="358">
-              <caret line="65" column="60" lean-forward="true" selection-start-line="65" selection-start-column="12" selection-end-line="65" selection-end-column="60" />
+            <state relative-caret-position="226">
+              <caret line="192" column="60" lean-forward="true" selection-start-line="192" selection-start-column="31" selection-end-line="192" selection-end-column="60" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -134,10 +127,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Models/ltsm.py">
+        <entry file="file://$PROJECT_DIR$/Models/bertClassifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="946">
-              <caret line="79" column="40" selection-start-line="79" selection-start-column="40" selection-end-line="79" selection-end-column="40" />
+            <state relative-caret-position="345">
+              <caret line="23" column="77" lean-forward="true" selection-start-line="23" selection-start-column="77" selection-end-line="23" selection-end-column="77" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -213,7 +206,6 @@
         <option value="$PROJECT_DIR$/Models/calculation.py" />
         <option value="$PROJECT_DIR$/Models/calculations.py" />
         <option value="$PROJECT_DIR$/WordEmbedding/vectors.py" />
-        <option value="$PROJECT_DIR$/Tokenization/tokenization.py" />
         <option value="$PROJECT_DIR$/Tokenization/server.py" />
         <option value="$PROJECT_DIR$/Models/dataPreparation.py" />
         <option value="$PROJECT_DIR$/Models/bertBase.py" />
@@ -233,17 +225,18 @@
         <option value="$PROJECT_DIR$/Models/sgd.py" />
         <option value="$PROJECT_DIR$/Models/svc.py" />
         <option value="$PROJECT_DIR$/Models/bert.py" />
-        <option value="$PROJECT_DIR$/Tokenization/tagger.py" />
-        <option value="$PROJECT_DIR$/Models/consolidation.py" />
         <option value="$PROJECT_DIR$/config.cfg" />
+        <option value="$PROJECT_DIR$/Models/consolidation.py" />
+        <option value="$PROJECT_DIR$/Tokenization/tokenization.py" />
+        <option value="$PROJECT_DIR$/Tokenization/tagger.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="580" />
     <option name="y" value="146" />
-    <option name="width" value="1400" />
-    <option name="height" value="1000" />
+    <option name="width" value="1390" />
+    <option name="height" value="1007" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -251,17 +244,13 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
               <item name="TrainAndTest" type="b2602c69:ProjectViewProjectNode" />
               <item name="TrainAndTest" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="TrainAndTest" type="b2602c69:ProjectViewProjectNode" />
-              <item name="TrainAndTest" type="462c0819:PsiDirectoryNode" />
-              <item name="General" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="TrainAndTest" type="b2602c69:ProjectViewProjectNode" />
@@ -277,12 +266,11 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/MLClassificationDocker" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
@@ -383,18 +371,19 @@
       <workItem from="1553123613076" duration="4747000" />
       <workItem from="1553178600918" duration="37428000" />
       <workItem from="1553451400598" duration="52132000" />
-      <workItem from="1553700767463" duration="19233000" />
+      <workItem from="1553700767463" duration="22822000" />
+      <workItem from="1553784993158" duration="9112000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="329095000" />
+    <option name="totallyTimeSpent" value="341796000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="28" width="2560" height="1236" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15724522" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15843949" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -443,16 +432,6 @@
     <entry file="file://$PROJECT_DIR$/fconfig.txt" />
     <entry file="file://$PROJECT_DIR$/Utils/config.py" />
     <entry file="file://$PROJECT_DIR$/General/config.py" />
-    <entry file="file://$PROJECT_DIR$/start.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="7" column="17" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Data/plots.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="600">
@@ -517,30 +496,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Models/metrics.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1033">
-          <caret line="241" selection-start-line="241" selection-end-line="241" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Models/dataPreparation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="823">
-          <caret line="181" column="67" lean-forward="true" selection-start-line="181" selection-start-column="22" selection-end-line="181" selection-end-column="67" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Models/bertClassifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="50">
-          <caret line="71" column="51" lean-forward="true" selection-start-line="71" selection-start-column="51" selection-end-line="71" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Models/pac.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="570">
@@ -591,26 +546,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Models/ltsm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="946">
-          <caret line="79" column="40" selection-start-line="79" selection-start-column="40" selection-end-line="79" selection-end-column="40" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Models/snn.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="883">
-          <caret line="62" column="27" lean-forward="true" selection-start-line="62" selection-start-column="27" selection-end-line="62" selection-end-column="27" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/General/launcher.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -618,60 +553,117 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Models/base.py">
+    <entry file="file://$PROJECT_DIR$/Models/snn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="751">
-          <caret line="139" lean-forward="true" selection-start-line="139" selection-end-line="139" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Tokenization/tokenization.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="34" selection-start-line="14" selection-start-column="34" selection-end-line="14" selection-end-column="34" />
-          <folding>
-            <element signature="e#0#48#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Tokenization/tagger.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="33" column="18" lean-forward="true" selection-start-line="33" selection-start-column="18" selection-end-line="33" selection-end-column="18" />
+        <state relative-caret-position="780">
+          <caret line="62" column="27" selection-start-line="62" selection-start-column="27" selection-end-line="62" selection-end-column="27" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Tokenization/server.py">
+    <entry file="file://$PROJECT_DIR$/Models/ltsm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="63" column="37" lean-forward="true" selection-start-line="63" selection-start-column="37" selection-end-line="63" selection-end-column="37" />
+        <state relative-caret-position="480">
+          <caret line="44" column="28" selection-start-line="44" selection-start-column="28" selection-end-line="44" selection-end-column="28" />
           <folding>
-            <element signature="e#0#12#0" expanded="true" />
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/start.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" column="10" lean-forward="true" selection-start-line="10" selection-start-column="10" selection-end-line="10" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Models/bertClassifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="23" column="77" lean-forward="true" selection-start-line="23" selection-start-column="77" selection-end-line="23" selection-end-column="77" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Models/bert.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="358">
-          <caret line="65" column="60" lean-forward="true" selection-start-line="65" selection-start-column="12" selection-end-line="65" selection-end-column="60" />
+        <state relative-caret-position="226">
+          <caret line="192" column="60" lean-forward="true" selection-start-line="192" selection-start-column="31" selection-end-line="192" selection-end-column="60" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Models/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="64" lean-forward="true" selection-start-line="64" selection-end-line="64" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Models/dataPreparation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="526">
+          <caret line="134" column="46" lean-forward="true" selection-start-line="134" selection-start-column="46" selection-end-line="134" selection-end-column="46" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Models/metrics.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="178">
+          <caret line="37" selection-start-line="34" selection-end-line="37" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Models/consolidation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="720">
-          <caret line="48" column="66" selection-start-line="48" selection-start-column="66" selection-end-line="48" selection-end-column="66" />
+        <state relative-caret-position="271">
+          <caret line="77" column="59" lean-forward="true" selection-start-line="77" selection-start-column="59" selection-end-line="77" selection-end-column="59" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tokenization/tokenization.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="34" lean-forward="true" selection-start-line="9" selection-start-column="34" selection-end-line="9" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#48#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tokenization/server.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="810">
+          <caret line="63" column="37" selection-start-line="63" selection-start-column="37" selection-end-line="63" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Tokenization/tagger.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="32" column="58" selection-start-line="32" selection-start-column="58" selection-end-line="32" selection-end-column="58" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
@@ -680,8 +672,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config.cfg">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="853">
-          <caret line="127" column="59" lean-forward="true" selection-start-line="127" selection-start-column="59" selection-end-line="127" selection-end-column="59" />
+        <state relative-caret-position="1963">
+          <caret line="135" column="92" lean-forward="true" selection-start-line="135" selection-start-column="92" selection-end-line="135" selection-end-column="92" />
         </state>
       </provider>
     </entry>
