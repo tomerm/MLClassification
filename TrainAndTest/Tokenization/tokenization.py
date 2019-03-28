@@ -7,9 +7,9 @@ class Tokenizer:
         print ("=== Tokenization ===")
         updateParams(Config, DefConfig, kwargs)
         self.Config = Config
-        self.DefConfig = DefConfig;
-        if Config["actualtoks"] != "yes":
-            return
+        self.DefConfig = DefConfig
+        #if Config["actualtoks"] != "yes":
+        #    return
         if len(Config["sourcepath"]) == 0 or Config["sourcepath"] == Config["targetpath"]:
             print ("Wrong source/target path(s). Tokenization can't be done.")
             Config["error"] = True
