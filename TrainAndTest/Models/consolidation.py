@@ -86,19 +86,21 @@ class Collector:
             printMetrics(self)
 
     def saveResources(self):
-        tokOpts = ["actualtoks", "normalization", "stopwords", "expos", "extrawords"]
+        tokOpts = ["actualtoks", "normalization", "stopwords", "expos", "extrawords", "rttaggerpath"]
         self.Config["resources"]["tokenization"] = {}
         ds = datetime.datetime.now()
+        self.outDir = fullPath(self.Config, "resourcespath") + "/"
         for i in range(len(tokOpts)):
             self.Config["resources"]["tokenization"][tokOpts[i]] = self.Config[tokOpts[i]]
-        #print (json.dumps(self.Config["resources"]))
-        self.outDir = fullPath(self.Config, "resourcespath") + "/"
+            if self.Config["actualtoks"] == "yes" and tokOpts[i] == "rttaggerpath":
+                self.Config["resources"]["tokenization"]["rttaggerpath"] = \
+                    self.copyFile(fullPath(self.Config, "rttaggerpath"))
         isW2VNeeded = False
         for key, val in self.Config["resources"]["models"].items():
             val["modelPath"] = self.copyFile(val["modelPath"])
             if "w2v" in val and val["w2v"] == "yes":
                 isW2VNeeded = True
-        if isW2VNeeded:
+        if not isW2VNeeded and "w2v" in self.Config["resources"]:
             self.Config["resources"].pop("w2v", None)
         if "w2v" in self.Config["resources"]:
             self.Config["resources"]["w2v"]["modelPath"] = self.copyFile(self.Config["resources"]["w2v"]["modelPath"])
