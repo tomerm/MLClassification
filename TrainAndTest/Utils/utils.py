@@ -4,10 +4,10 @@ def showTime(ds,de):
     seconds = (de-ds).total_seconds()
     if seconds < 1:
         return "less than 1 sec"
-    hh = seconds//(60*24);
+    hh = seconds//3600;
     if hh > 0:
         result = "%d h:"%(hh);
-    seconds = seconds%(60*24)
+    seconds = seconds%(3600)
     mm = seconds//60;
     if mm > 0:
         result += "%d min:"%(mm)

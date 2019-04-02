@@ -68,8 +68,8 @@ class BertModel(BaseModel):
         self.num_labels = len(self.Config["cats"])
         self.label_list = self.processor.get_labels()
         #self.tokenizer = BertTokenizer.from_pretrained(self.args.bert_model, do_lower_case=self.do_lower_case)
-        vocabPath = os.path.dirname(self.args.bert_model) + "/vocab.txt"
-        self.tokenizer = BertTokenizer(vocabPath)
+        self.vocabPath = os.path.dirname(self.args.bert_model) + "/vocab.txt"
+        self.tokenizer = BertTokenizer(self.vocabPath)
 
     def createModel(self):
         self.train_examples = self.processor.get_train_examples(self.args.data_dir)
@@ -247,6 +247,8 @@ class BertModel(BaseModel):
         self.resources["modelType"] = type
         if not "ptBertModel" in self.Config["resources"]:
             self.Config["resources"]["ptBertModel"] = self.arsg.bert_model
+            self.Config["resources"]["vocabPath"] = self.vocabPath
         self.resources["ptBertModel"] = "yes"
+        self.resources["handleType"] = "bert"
 
 

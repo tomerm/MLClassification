@@ -24,6 +24,7 @@ class DataLoader:
         self.sz = 0
         self.splitTrain = False
         self.topBound = 0.9
+        self.charsTopBound = 0.6
 
         if len(Config["trainpath"]) == 0 or not os.path.isdir(fullPath(Config, "trainpath")):
             print ("Wrong path to training set. Data can't be loaded.")
@@ -79,6 +80,7 @@ class DataLoader:
         self.Config["traindocs"] = random.sample(traindocs, len(traindocs))
         self.Config["testdocs"] = random.sample(testdocs, len(testdocs))
         self.getMaxSeqLen()
+        self.getMaxCharsLength()
         print ("Input data loaded in %s"%(showTime(ds, de)))
         print ("Training set contains %d documents."%(len(self.Config["traindocs"])))
         print ("Testing set contains %d documents."%(len(self.Config["testdocs"])))
@@ -161,13 +163,52 @@ class DataLoader:
         self.Config["maxdoclen"] = maxDocLen
         self.Config["maxseqlen"] = maxSeqLength
 
+    def getMaxCharsLength(self):
+        maxDocLen = max(len(x.lines) for x in self.Config["traindocs"])
+        maxLen = math.ceil(maxDocLen / 100) * 100 + 100
+        input_length_list = []
+        for i in range(100, maxLen, 100):
+            input_length_list.append(i)
+        input_length_dict = {x: 0 for x in input_length_list}
+        for i in range(len(self.Config["traindocs"])):
+            curLen = len(self.Config["traindocs"][i].lines)
+            dictLen = maxLen
+            for ln in input_length_dict:
+                if curLen < ln:
+                    dicLen = ln
+                    break
+            input_length_dict[dicLen] = input_length_dict[dicLen] + 1
+        input_length_dict_percentage = {}
+        for k, v in input_length_dict.items():
+            v = v / len(self.Config["traindocs"])
+            input_length_dict_percentage[k] = v
+        maxSeqLength = 0
+        accumulate_percentage = 0
+        for length, percentage in input_length_dict_percentage.items():
+            accumulate_percentage += percentage
+            if accumulate_percentage > self.charsTopBound:
+                maxSeqLength = length
+                break
+
+        self.Config["maxcharsdoclen"] = maxDocLen
+        self.Config["maxcharsseqlen"] = min(maxSeqLength, 512)
+
     def analysis(self):
         maxDocLen = max(len(x.words) for x in self.Config["traindocs"])
         minDocLen = min(len(x.words) for x in self.Config["traindocs"])
         avrgDocLen = round(statistics.mean(len(x.words) for x in self.Config["traindocs"]), 2)
+        maxCharsDocLen = max(len(x.lines) for x in self.Config["traindocs"])
+        minCharsDocLen = min(len(x.lines) for x in self.Config["traindocs"])
+        avrgCharsDocLen = round(statistics.mean(len(x.lines) for x in self.Config["traindocs"]), 2)
         dls, qLabs = self.getLabelSets()
         fInCats1 = self.filesByCategory(self.Config["traindocs"], self.Config["cats"])
         fInCats2 = self.filesByCategory(self.Config["testdocs"], self.Config["cats"])
+        print("Length of train documents: maximum: %d, minimum: %d, average: %d" % (
+                        maxCharsDocLen, minCharsDocLen, avrgCharsDocLen))
+        """
+        print("Length of %.1f%% documents from training set is less then %d characters." % (
+                    self.charsTopBound * 100, self.Config["maxcharsseqlen"]))
+        """
         print("Tokens in train documents: maximum: %d, minimum: %d, average: %d" % (maxDocLen, minDocLen, avrgDocLen))
         print("Length of %.1f%% documents from training set is less then %d tokens." % (
             self.topBound * 100, self.Config["maxseqlen"]))

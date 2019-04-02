@@ -71,7 +71,7 @@ class ModelController:
             stop = True
         if Config["runfor"] != "test":
             try:
-                epochs = int(Config["epochs"])
+                self.epochs = int(Config["epochs"])
             except ValueError:
                 print ("Wrong quantity of epochs for training.")
                 stop = True

@@ -67,3 +67,4 @@ class SnnModel(BaseModel):
 
     def saveAdditions(self):
         self.resources["w2v"] = "yes"
+        self.resources["handleType"] = "wordVectorsSum"
