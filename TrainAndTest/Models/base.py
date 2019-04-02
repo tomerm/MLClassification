@@ -146,6 +146,8 @@ class BaseModel:
         self.resources["modelPath"] = fullPath(self.Config, "modelpath", opt="name")
         self.resources["modelType"] = type
         self.saveAdditions()
+        if type == "skl":
+            self.resources["handleType"] = "vectorize"
         self.Config["resources"]["models"]["Model" + str(self.Config["modelid"])] = self.resources
 
     def saveAdditions(self):

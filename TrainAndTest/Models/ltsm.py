@@ -78,3 +78,4 @@ class LTSMModel(BaseModel):
         if not "indexer" in self.Config["resources"]:
             self.Config["resources"]["indexer"] = fullPath(self.Config, "indexerpath")
         self.resources["indexer"] = "yes"
+        self.resources["handleType"] = "wordVectorsMatrix"

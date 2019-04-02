@@ -86,7 +86,8 @@ class Collector:
             printMetrics(self)
 
     def saveResources(self):
-        tokOpts = ["actualtoks", "normalization", "stopwords", "expos", "extrawords", "rttaggerpath"]
+        tokOpts = ["actualtoks", "normalization", "stopwords", "expos", "extrawords",
+                   "maxseqlen", "maxcharsseqlen", "rttaggerpath"]
         self.Config["resources"]["tokenization"] = {}
         ds = datetime.datetime.now()
         self.outDir = fullPath(self.Config, "resourcespath") + "/"
@@ -110,6 +111,7 @@ class Collector:
             self.Config["resources"]["vectorizer"] = self.copyFile(self.Config["resources"]["vectorizer"])
         if "ptBertModel" in self.Config["resources"]:
             self.Config["resources"]["ptBertModel"] = self.copyFile(self.Config["resources"]["ptBertModel"])
+            self.Config["resources"]["vocabPath"] = self.copyFile(self.Config["resources"]["vocabPath"])
         cNames = [''] * len(self.Config["cats"])
         for k, v in self.Config["cats"].items():
             cNames[v] = k

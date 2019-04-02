@@ -11,6 +11,9 @@ from Models.base import BaseModel
 from Models.dataPreparation import DataPreparation
 from Utils.utils import getDictionary, fullPath, showTime
 
+from keras import backend as K
+import tensorflow as tf
+
 class CNNModel(BaseModel):
     def __init__(self, Config):
         super().__init__(Config)
@@ -34,7 +37,7 @@ class CNNModel(BaseModel):
 
     def createModel(self):
         embeddingSize = 128
-        maxSeqLength = self.Config["maxseqlen"]
+        maxSeqLength = self.Config["maxcharsseqlen"]
         convLayersData = [[256, 10], [256, 7], [256, 5], [256, 3]]
         dropout_p = 0.1
         optimizer = 'adam'
@@ -61,7 +64,16 @@ class CNNModel(BaseModel):
         self.model = self.loadNNModel()
 
     def trainModel(self):
+        """
+        cf = tf.ConfigProto(inter_op_parallelism_threads=5)
+        session = tf.Session(config=cf)
+        K.set_session(session)
+        """
+
         self.trainNNModel()
 
     def testModel(self):
         self.testNNModel()
+
+    def saveAdditions(self):
+        self.resources["handleType"] = "charVectors"

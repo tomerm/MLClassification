@@ -93,6 +93,7 @@ class DataPreparation:
             tokenizer.fit_on_texts(trainTexts)
             with open(fullPath(self.model.Config, "indexerpath"), 'wb') as handle:
                 pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            handle.close()
             if self.model.Config["maxdoclen"] > self.model.Config["maxseqlen"]:
                 print("Most of documents from training set have less then %d tokens. Longer documents will be truncated."%(
                     self.model.Config["maxseqlen"]))
@@ -109,6 +110,7 @@ class DataPreparation:
         if tokenizer == None:
             with open(fullPath(self.model.Config, "indexerpath"), 'rb') as handle:
                 tokenizer = pickle.load(handle)
+            handle.close()
         testTexts = []
         for i in range(len(self.model.Config["testdocs"])):
             testTexts.append(self.model.Config["testdocs"][i].lines)
@@ -136,8 +138,14 @@ class DataPreparation:
 
     def getCharVectors(self):
         ds = datetime.datetime.now()
+        """
+        if self.model.Config["maxcharsdoclen"] > self.model.Config["maxcharsseqlen"]:
+            print(
+                "Most of documents from training set have less then %d characters. Longer documents will be truncated." % (
+                    self.model.Config["maxcharsseqlen"]))
+        """
         if self.model.Config["runfor"] != "test":
-            self.model.trainArrays = numpy.concatenate([self.stringToIndexes(x.lines)
+            self.model.trainArrays = numpy.concatenate([self.stringToIndexes(" ".join(x.words))
                                             for x in self.model.Config["traindocs"]])
             self.model.trainLabels = numpy.concatenate([numpy.array(x.labels).
                                 reshape(1, len(self.model.Config["cats"])) for x in self.model.Config["traindocs"]])
@@ -147,7 +155,7 @@ class DataPreparation:
                 self.model.valLabels = self.model.trainLabels[ind:]
                 self.model.trainArrays = self.model.trainArrays[:ind]
                 self.model.trainLabels = self.model.trainLabels[:ind]
-        self.model.testArrays = numpy.concatenate([self.stringToIndexes(x.lines)
+        self.model.testArrays = numpy.concatenate([self.stringToIndexes(" ".join(x.words))
                                             for x in self.model.Config["testdocs"]])
         self.model.testLabels = numpy.concatenate([numpy.array(x.labels).
                                 reshape(1, len(self.model.Config["cats"])) for x in self.model.Config["testdocs"]])
@@ -156,13 +164,13 @@ class DataPreparation:
 
     def stringToIndexes(self, str):
         chDict = getDictionary()
-        str2ind = numpy.zeros(self.model.Config["maxseqlen"], dtype='int64')
-        strLen = min(len(str), self.model.Config["maxseqlen"])
+        str2ind = numpy.zeros(self.model.Config["maxcharsseqlen"], dtype='int64')
+        strLen = min(len(str), self.model.Config["maxcharsseqlen"])
         for i in range(1, strLen + 1):
             c = str[-i]
             if c in chDict:
                 str2ind[i - 1] = chDict[c]
-        return str2ind.reshape(1, self.model.Config["maxseqlen"])
+        return str2ind.reshape(1, self.model.Config["maxcharsseqlen"])
 
     def getDataForSklearnClassifiers(self):
         mlb = None
@@ -179,13 +187,17 @@ class DataPreparation:
             self.model.trainLabels = mlb.fit_transform([x.nlabs for x in self.model.Config["traindocs"]])
             with open(fullPath(self.model.Config, "binarizerpath"), 'wb') as handle:
                 pickle.dump(mlb, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            handle.close()
             with open(fullPath(self.model.Config, "vectorizerpath"), 'wb') as handle:
                 pickle.dump(wev, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            handle.close()
         if mlb == None:
             with open(fullPath(self.model.Config, "binarizerpath"), 'rb') as handle:
                 mlb = pickle.load(handle)
+            handle.close()
             with open(fullPath(self.model.Config, "vectorizerpath"), 'rb') as handle:
                 wev = pickle.load(handle)
+            handle.close()
         self.model.testArrays = wev.transform([x.lines for x in self.model.Config["testdocs"]])
         self.model.testLabels = mlb.fit_transform([x.nlabs for x in self.model.Config["testdocs"]])
         de = datetime.datetime.now()
