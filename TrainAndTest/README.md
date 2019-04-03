@@ -91,7 +91,10 @@ _Note: 'w2vDim' and 'w2vModelPath' can be used by other processes, which need wo
 
 ## Data Loading
 _DataLoader_ load all data, needed for training and testing models (including W2V data, if required). All this is placed into 
-the internal cache and can be reused by the other processes in the chain.
+the internal cache and can be reused by the other processes in the chain.     
+In addition it can perform per-line preprocessing of the data.
+
+_Note: per-line tokenization significantly slows down the data loading._
 
 #### Parameters:
 
@@ -104,6 +107,7 @@ valSize | 0.15 | Size of validation data set as a part of train data set.
 exCats | <list> / empty | List of categories, which should be excluded from training and testing.
 analysis | *yes*/no | Defines the need to show data set analysis.
 w2vLoad | *yes*/no | Defines if W2V model should be loaded.
+dataToks | yes/no | Defines if data should be preprocessed.
 
 _Note: If W2V model will not be loaded by _DataLoader_, it will be loaded and placed into the internal cache by first 
 in the chain _Model_ process, which require word embedding._
