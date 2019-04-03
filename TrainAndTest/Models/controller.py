@@ -95,15 +95,14 @@ class ModelController:
                     print ("Wrong path to folder containing model info.")
                     stop = True
         if Config["runfor"] == "crossvalidation":
+            if Config["cvsave"] == "yes":
+                if len(Config["cvpath"]) == 0 or not os.path.isdir(fullPath(Config, "cvpath")):
+                    print("Wrong path to the cross-validation's resulting folder.")
+                    stop = True
             try:
                 kfold = int(Config["kfold"])
             except ValueError:
                 print ("Wrong k-fold value.")
-                stop = True
-            try:
-                pSize = float(Config["psize"])
-            except ValueError:
-                print ("Wrong pSize value.")
                 stop = True
         if stop:
             print ("Stop.")

@@ -25,14 +25,17 @@ class CNNModel(BaseModel):
             print ("Wrong size of validation data set. Stop.")
             Config["error"] = True
             return
+        self.addValSet = True
+        self.handleType = "charVectors"
         self.tempSave = Config["tempsave"] == "yes"
         self.useProbabilities = True
-        self.prepareData()
+        if Config["runfor"] != "crossvalidation":
+            self.prepareData()
         self.launchProcess()
 
     def prepareData(self):
         print("Start data preparation...")
-        dp = DataPreparation(self, True)
+        dp = DataPreparation(self, self.addValSet)
         dp.getCharVectors()
 
     def createModel(self):

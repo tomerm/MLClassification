@@ -263,10 +263,10 @@ def composeTsv(model, type):
         cNames[v] = k
     if type == "train":
         bertPath = fullPath(model.Config, "bertoutpath", opt="/train.tsv")
-        data = model.Config["traindocs"]
+        data = model.Config[model.keyTrain]
     else:
         bertPath = fullPath(model.Config, "bertoutpath", opt="/dev.tsv")
-        data = model.Config["testdocs"]
+        data = model.Config[model.keyTest]
     target = open(bertPath, "w", encoding="utf-8")
     for i in range(len(data)):
         conts = data[i].lines.replace('\r','').replace('\n','.')

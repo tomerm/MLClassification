@@ -1,4 +1,6 @@
 import gensim
+import os
+import shutil
 import datetime
 from keras.models import load_model
 from keras.callbacks import ModelCheckpoint
@@ -7,6 +9,7 @@ from sklearn.metrics import accuracy_score
 from Utils.utils import fullPath
 from Models.metrics import metricsNames, printMetrics
 from Models.metrics import ModelMetrics
+from Models.dataPreparation import DataPreparation
 from Utils.utils import leftAlign, showTime
 
 class BaseModel:
@@ -18,18 +21,27 @@ class BaseModel:
         self.testLabels = []
         self.valArrays = []
         self.valLabels = []
+        self.cvDocs = []
         self.predictions = []
         self.metrics = {}
         self.resources = {}
+        self.addValSet = False
+        self.valSize = 0
+        self.isCV = False
+        self.handleType = ""
 
         self.epochs = int(Config["epochs"])
         self.verbose = int(Config["verbose"])
+        self.kfold = int(Config["kfold"])
         if self.verbose != 0:
             self.verbose = 1
         self.trainBatch = int(Config["trainbatch"])
 
     def launchProcess(self):
-        if self.Config["runfor"] != "test":
+        if self.Config["runfor"] == "crossvalidation":
+            self.isCV = True
+            self.launchCrossValidation()
+        elif self.Config["runfor"] != "test":
             self.model = self.createModel()
             self.trainModel()
             if self.Config["runfor"] != "train":
@@ -71,18 +83,20 @@ class BaseModel:
 
     def trainNNModel(self):
         checkpoints = []
-        if self.tempSave:
+        if self.tempSave and not self.isCV:
             checkpoint = ModelCheckpoint(fullPath(self.Config, "temppath") + "/tempModel.hdf5", monitor='val_acc',
                                      verbose=self.verbose, save_best_only=True, mode='auto')
             checkpoints.append(checkpoint)
-        print("Start training..")
+        print("Start training...              ")
         ds = datetime.datetime.now()
         self.model.fit(self.trainArrays, self.trainLabels, epochs=self.epochs,
                 validation_data=(self.valArrays, self.valLabels),
                 batch_size=self.trainBatch, verbose=self.verbose, callbacks=checkpoints, shuffle=False)
         de = datetime.datetime.now()
-        self.model.save(fullPath(self.Config, "modelpath", opt="name"))
         print("Model is trained in %s" %  (showTime(ds, de)))
+        if self.isCV:
+            return
+        self.model.save(fullPath(self.Config, "modelpath", opt="name"))
         print ("Model evaluation...")
         scores1 = self.model.evaluate(self.testArrays, self.testLabels, verbose=self.verbose)
         print("Final model accuracy: %.2f%%" % (scores1[1] * 100))
@@ -104,13 +118,15 @@ class BaseModel:
         self.model.fit(self.trainArrays, self.trainLabels)
         ds = datetime.datetime.now()
         print("Model is trained in %s" % (showTime(de, ds)))
+        if self.isCV:
+            return
         joblib.dump(self.model, fullPath(self.Config, "modelpath", opt="name"))
         print ("Model is saved in %s"%(fullPath(self.Config, "modelpath", opt="name")))
         print("Model evaluation...")
         prediction = self.model.predict(self.testArrays)
         print('Final accuracy is %.2f'%(accuracy_score(self.testLabels, prediction)))
         de = datetime.datetime.now()
-        print("Prediction in %s" % (showTime(ds, de)))
+        print("Evaluated in %s" % (showTime(ds, de)))
 
     def testNNModel(self):
         print ("Start testing...")
@@ -118,6 +134,8 @@ class BaseModel:
         self.predictions = self.model.predict(self.testArrays)
         de = datetime.datetime.now()
         print("Test dataset containing %d documents predicted in %s\n" % (len(self.testArrays), showTime(ds, de)))
+        if self.isCV:
+            return
         self.saveResources("keras")
         self.getMetrics()
         self.saveResults()
@@ -127,7 +145,9 @@ class BaseModel:
         ds = datetime.datetime.now()
         self.predictions = self.model.predict(self.testArrays)
         de = datetime.datetime.now()
-        print("Test dataset containing %d documents predicted in %s\n" % (self.testArrays.shape[0], showTime(ds, de)))
+        print("Test dataset containing %d documents predicted in %s" % (self.testArrays.shape[0], showTime(ds, de)))
+        if self.isCV:
+            return
         self.saveResources("skl")
         self.getMetrics()
         self.saveResults()
@@ -152,3 +172,69 @@ class BaseModel:
 
     def saveAdditions(self):
         pass
+
+    def launchCrossValidation(self):
+        print ("Start cross-validation...")
+        ds = datetime.datetime.now()
+        dp = DataPreparation(self, self.addValSet)
+        pSize = len(self.cvDocs) // self.kfold
+        ind = 0
+        f1 = 0
+        for i in range(self.kfold):
+            print ("Cross-validation, cycle %d from %d..."%((i+1), self.kfold))
+            if i == 0:
+                self.Config["cvtraindocs"] = self.cvDocs[pSize:]
+                self.Config["cvtestdocs"] = self.cvDocs[:pSize]
+            elif i == self.kfold - 1:
+                self.Config["cvtraindocs"] = self.cvDocs[:ind]
+                self.Config["cvtestdocs"] = self.cvDocs[ind:]
+            else:
+                self.Config["cvtraindocs"] = self.cvDocs[:ind] + self.cvDocs[ind+pSize:]
+                self.Config["cvtestdocs"] = self.cvDocs[ind:ind+pSize]
+            ind += pSize
+            dp.getVectors(self.handleType)
+            self.model = self.createModel()
+            self.trainModel()
+            self.testModel()
+            ModelMetrics(self)
+            cycleF1 = self.metrics["all"]["f1"]
+            print ("Resulting F1-Measure: %f\n"%(cycleF1))
+            if cycleF1 > f1:
+                if self.Config["cvsave"]:
+                    self.saveDataSets()
+                f1 = cycleF1
+        de = datetime.datetime.now()
+        print ("Cross-validation is done in %s"%(showTime(ds, de)))
+        print ("The best result is %f"%(f1))
+        print ("Corresponding data sets are saved in the folder %s"%(fullPath(self.Config, "cvpath")))
+
+    def saveDataSets(self):
+        root = fullPath(self.Config, "cvpath")
+        shutil.rmtree(root)
+        os.mkdir(root)
+        trainPath = root + "/train"
+        testPath = root + "/test"
+        folds = {}
+        os.mkdir(trainPath)
+        for i in range(len(self.Config["cvtraindocs"])):
+            doc = self.Config["cvtraindocs"][i]
+            for j in range(len(doc.nlabs)):
+                foldPath = trainPath + "/" + doc.nlabs[j]
+                if doc.nlabs[j] not in folds:
+                    os.mkdir(foldPath)
+                    folds[doc.nlabs[j]] = True
+                with open(foldPath + '/' + doc.name, 'w', encoding="utf-8") as file:
+                    file.write(doc.lines)
+                file.close()
+        folds = {}
+        os.mkdir(testPath)
+        for i in range(len(self.Config["cvtestdocs"])):
+            doc = self.Config["cvtestdocs"][i]
+            for j in range(len(doc.nlabs)):
+                foldPath = testPath + "/" + doc.nlabs[j]
+                if doc.nlabs[j] not in folds:
+                    os.mkdir(foldPath)
+                    folds[doc.nlabs[j]] = True
+                with open(foldPath + '/' + doc.name, 'w', encoding="utf-8") as file:
+                    file.write(doc.lines)
+                file.close()

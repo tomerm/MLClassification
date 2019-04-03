@@ -48,8 +48,11 @@ class BertModel(BaseModel):
         self.local_rank = -1
         self.seed = 42
         self.gradient_accumulation_steps = 1
+        self.keyTrain = "traindocs"
+        self.keyTest = "testdocs"
         #self.train_batch_size = args.train_batch_size // args.gradient_accumulation_steps
-        self.prepareData()
+        if self.Config["runfor"] != "crossvalidation":
+            self.prepareData()
         self.launchProcess()
 
     def prepareData(self):
@@ -134,13 +137,12 @@ class BertModel(BaseModel):
                     global_step += 1
         de = datetime.datetime.now()
         print("Model is trained in %s" %  (showTime(ds, de)))
+        if self.Config["runfor"] == "crossvalidation":
+            return
         print ("Model evaluation...")
         eval_examples = self.processor.get_dev_examples(self.args.data_dir)
         eval_features = convert_examples_to_features(
             eval_examples, self.label_list, self.max_seq_length, self.tokenizer)
-        #logger.info("***** Running evaluation *****")
-        #logger.info("  Num examples = %d", len(eval_examples))
-        #logger.info("  Batch size = %d", self.eval_batch_size)
         all_input_ids = torch.tensor([f.input_ids for f in eval_features], dtype=torch.long)
         all_input_mask = torch.tensor([f.input_mask for f in eval_features], dtype=torch.long)
         all_segment_ids = torch.tensor([f.segment_ids for f in eval_features], dtype=torch.long)
@@ -176,7 +178,6 @@ class BertModel(BaseModel):
             eval_accuracy += tmp_eval_accuracy
             nb_eval_examples += input_ids.size(0)
             nb_eval_steps += 1
-        #eval_loss = eval_loss / nb_eval_steps
         eval_accuracy = eval_accuracy / nb_eval_examples
         print ("Model accuracy: %.2f"%(eval_accuracy))
         # Save a trained model
@@ -238,7 +239,8 @@ class BertModel(BaseModel):
         self.predictions = res
         de = datetime.datetime.now()
         print("Test dataset containing %d documents predicted in %s\n" % (len(eval_examples), showTime(ds, de)))
-        self.saveResources("torch")
+        if self.Config["runfor"] != "crossvalidation":
+            self.saveResources("torch")
         self.getMetrics()
 
     def saveResources(self, type):
@@ -250,5 +252,42 @@ class BertModel(BaseModel):
             self.Config["resources"]["vocabPath"] = self.vocabPath
         self.resources["ptBertModel"] = "yes"
         self.resources["handleType"] = "bert"
+
+    def launchCrossValidation(self):
+        print ("Start cross-validation...")
+        ds = datetime.datetime.now()
+        self.cvDocs = self.Config["traindocs"] + self.Config["testdocs"]
+        random.shuffle(self.cvDocs)
+        self.keyTrain = "cvtraindocs"
+        self.keyTest = "cvtestdocs"
+        pSize = len(self.cvDocs) // self.kfold
+        ind = 0
+        f1 = 0
+        for i in range(self.kfold):
+            print ("Cross-validation, cycle %d from %d..."%((i+1), self.kfold))
+            if i == 0:
+                self.Config["cvtraindocs"] = self.cvDocs[pSize:]
+                self.Config["cvtestdocs"] = self.cvDocs[:pSize]
+            elif i == self.kfold - 1:
+                self.Config["cvtraindocs"] = self.cvDocs[:ind]
+                self.Config["cvtestdocs"] = self.cvDocs[ind:]
+            else:
+                self.Config["cvtraindocs"] = self.cvDocs[:ind] + self.cvDocs[ind+pSize:]
+                self.Config["cvtestdocs"] = self.cvDocs[ind:ind+pSize]
+            ind += pSize
+            self.prepareData()
+            self.model = self.createModel()
+            self.trainModel()
+            self.testModel()
+            cycleF1 = self.metrics["all"]["f1"]
+            print ("Resulting F1-Measure: %f\n"%(cycleF1))
+            if cycleF1 > f1:
+                if self.Config["cvsave"]:
+                    self.saveDataSets()
+                f1 = cycleF1
+        de = datetime.datetime.now()
+        print ("Cross-validation is done in %s"%(showTime(ds, de)))
+        print ("The best result is %f"%(f1))
+        print ("Corresponding data sets are saved in the folder %s"%(fullPath(self.Config, "cvpath")))
 
 

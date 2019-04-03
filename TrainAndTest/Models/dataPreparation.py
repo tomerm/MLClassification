@@ -1,6 +1,7 @@
 import numpy
 import pickle
 import datetime
+import random
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from sklearn.preprocessing import MultiLabelBinarizer
@@ -19,20 +20,39 @@ class DataPreparation:
         if addValSet:
             self.valSize = float(model.Config["valsize"])
             if model.Config["runfor"] != "test":
-                print("Validation: %f" % (self.valSize))
+                print("Validation: %.2f" % (self.valSize))
         else:
             self.valSize = 0
+        if model.Config["runfor"] == "crossvalidation":
+            self.model.cvDocs = model.Config["traindocs"] + model.Config["testdocs"]
+            random.shuffle(self.model.cvDocs)
+            self.keyTrain = "cvtraindocs"
+            self.keyTest = "cvtestdocs"
+        else:
+            self.keyTrain = "traindocs"
+            self.keyTest = "testdocs"
+
+    def getVectors(self, type):
+        if type == "wordVectorsSum":
+            self.getWordVectorsSum()
+        elif type == "wordVectorsMatrix":
+            self.getWordVectorsMatrix()
+        elif type == "charVectors":
+            self.getCharVectors()
+        elif type == "vectorize":
+            self.getDataForSklearnClassifiers()
+        else:
+            pass
 
     def getWordVectorsSum(self):
         self.nfWords = 0
         self.sdict = dict()
         self.tmpCount = 0
-
         if self.model.Config["runfor"] != "test":
             ds = datetime.datetime.now()
-            self.model.trainArrays = numpy.concatenate([self.getDocsArray(x.words, 'Train') for x in self.model.Config["traindocs"]])
+            self.model.trainArrays = numpy.concatenate([self.getDocsArray(x.words, 'Train') for x in self.model.Config[self.keyTrain]])
             self.model.trainLabels = numpy.concatenate([numpy.array(x.labels).
-                                reshape(1, len(self.model.Config["cats"])) for x in self.model.Config["traindocs"]])
+                                reshape(1, len(self.model.Config["cats"])) for x in self.model.Config[self.keyTrain]])
 
             if self.addValSet:
                 ind = int(len(self.model.trainArrays) * (1 - self.valSize))
@@ -47,15 +67,15 @@ class DataPreparation:
                 de = datetime.datetime.now()
                 print("Prepare train data in %s" % (showTime(ds, de)))
 
-
         self.tmpCount = 0
         ds = datetime.datetime.now()
-        self.model.testArrays = numpy.concatenate([self.getDocsArray(x.words, "Test") for x in self.model.Config["testdocs"]])
+        self.model.testArrays = numpy.concatenate([self.getDocsArray(x.words, "Test") for x in self.model.Config[self.keyTest]])
         self.model.testLabels = numpy.concatenate([numpy.array(x.labels).
-                                reshape(1, len(self.model.Config["cats"])) for x in self.model.Config["testdocs"]])
+                                reshape(1, len(self.model.Config["cats"])) for x in self.model.Config[self.keyTest]])
+        if self.model.isCV:
+            return
         de = datetime.datetime.now()
         print("Prepare test data in %s" % (showTime(ds, de)))
-
         print("Unique words in all documents: %d" % (len(self.sdict)))
         print("Words not found in the w2v vocabulary: %d" % (self.nfWords))
 
@@ -88,19 +108,20 @@ class DataPreparation:
         if self.model.Config["runfor"] != "test":
             tokenizer = Tokenizer(num_words=self.maxWords)
             trainTexts = []
-            for i in range(len(self.model.Config["traindocs"])):
-                trainTexts.append(self.model.Config["traindocs"][i].lines)
+            for i in range(len(self.model.Config[self.keyTrain])):
+                trainTexts.append(self.model.Config[self.keyTrain][i].lines)
             tokenizer.fit_on_texts(trainTexts)
-            with open(fullPath(self.model.Config, "indexerpath"), 'wb') as handle:
-                pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
-            handle.close()
-            if self.model.Config["maxdoclen"] > self.model.Config["maxseqlen"]:
-                print("Most of documents from training set have less then %d tokens. Longer documents will be truncated."%(
-                    self.model.Config["maxseqlen"]))
+            if not self.model.isCV:
+                with open(fullPath(self.model.Config, "indexerpath"), 'wb') as handle:
+                    pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                handle.close()
+                if self.model.Config["maxdoclen"] > self.model.Config["maxseqlen"]:
+                    print("Most of documents from training set have less then %d tokens. Longer documents will be truncated."%(
+                        self.model.Config["maxseqlen"]))
             self.model.trainArrays = pad_sequences(tokenizer.texts_to_sequences(trainTexts),
                                                     maxlen=self.model.Config["maxseqlen"])
             self.model.trainLabels = numpy.concatenate([numpy.array(x.labels).
-                            reshape(1, len(self.model.Config["cats"])) for x in self.model.Config["traindocs"]])
+                            reshape(1, len(self.model.Config["cats"])) for x in self.model.Config[self.keyTrain]])
             if self.addValSet:
                 ind = int(len(self.model.trainArrays) * (1 - self.valSize))
                 self.model.valArrays = self.model.trainArrays[ind:]
@@ -112,12 +133,12 @@ class DataPreparation:
                 tokenizer = pickle.load(handle)
             handle.close()
         testTexts = []
-        for i in range(len(self.model.Config["testdocs"])):
-            testTexts.append(self.model.Config["testdocs"][i].lines)
+        for i in range(len(self.model.Config[self.keyTest])):
+            testTexts.append(self.model.Config[self.keyTest][i].lines)
         self.model.testArrays = pad_sequences(tokenizer.texts_to_sequences(testTexts),
                                               maxlen=self.model.Config["maxseqlen"])
         self.model.testLabels = numpy.concatenate([numpy.array(x.labels).
-                            reshape(1, len(self.model.Config["cats"])) for x in self.model.Config["testdocs"]])
+                            reshape(1, len(self.model.Config["cats"])) for x in self.model.Config[self.keyTest]])
         embedding_matrix = numpy.zeros((self.maxWords, self.ndim))
         word_index = tokenizer.word_index
         nf = 0
@@ -130,6 +151,10 @@ class DataPreparation:
                     continue
                 if embedding_vector is not None:
                     embedding_matrix[i] = embedding_vector
+        self.model.embMatrix =  embedding_matrix
+        self.model.maxWords = self.maxWords
+        if self.model.isCV:
+            return
         de = datetime.datetime.now()
         print('Found %s unique tokens.' % len(tokenizer.word_index))
         print ('Tokens not found in W2V vocabulary: %d'%nf)
@@ -146,9 +171,9 @@ class DataPreparation:
         """
         if self.model.Config["runfor"] != "test":
             self.model.trainArrays = numpy.concatenate([self.stringToIndexes(" ".join(x.words))
-                                            for x in self.model.Config["traindocs"]])
+                                            for x in self.model.Config[self.keyTrain]])
             self.model.trainLabels = numpy.concatenate([numpy.array(x.labels).
-                                reshape(1, len(self.model.Config["cats"])) for x in self.model.Config["traindocs"]])
+                                reshape(1, len(self.model.Config["cats"])) for x in self.model.Config[self.keyTrain]])
             if self.addValSet:
                 ind = int(len(self.model.trainArrays) * (1 - self.valSize))
                 self.model.valArrays = self.model.trainArrays[ind:]
@@ -156,9 +181,11 @@ class DataPreparation:
                 self.model.trainArrays = self.model.trainArrays[:ind]
                 self.model.trainLabels = self.model.trainLabels[:ind]
         self.model.testArrays = numpy.concatenate([self.stringToIndexes(" ".join(x.words))
-                                            for x in self.model.Config["testdocs"]])
+                                            for x in self.model.Config[self.keyTest]])
         self.model.testLabels = numpy.concatenate([numpy.array(x.labels).
-                                reshape(1, len(self.model.Config["cats"])) for x in self.model.Config["testdocs"]])
+                                reshape(1, len(self.model.Config["cats"])) for x in self.model.Config[self.keyTest]])
+        if self.model.isCV:
+            return
         de = datetime.datetime.now()
         print("Prepare all data in %s" % (showTime(ds, de)))
 
@@ -181,16 +208,17 @@ class DataPreparation:
             for i in range(len(cKeys)):
                 nmCats[self.model.Config["cats"][cKeys[i]]] = cKeys[i]
             mlb = MultiLabelBinarizer(classes=nmCats)
-            wev = TfidfVectorizer(ngram_range=(1, 3), max_df=0.50).fit([x.lines for x in self.model.Config["traindocs"]],
-                                                                   [x.nlabs for x in self.model.Config["traindocs"]])
-            self.model.trainArrays = wev.transform([x.lines for x in self.model.Config["traindocs"]])
-            self.model.trainLabels = mlb.fit_transform([x.nlabs for x in self.model.Config["traindocs"]])
-            with open(fullPath(self.model.Config, "binarizerpath"), 'wb') as handle:
-                pickle.dump(mlb, handle, protocol=pickle.HIGHEST_PROTOCOL)
-            handle.close()
-            with open(fullPath(self.model.Config, "vectorizerpath"), 'wb') as handle:
-                pickle.dump(wev, handle, protocol=pickle.HIGHEST_PROTOCOL)
-            handle.close()
+            wev = TfidfVectorizer(ngram_range=(1, 3), max_df=0.50).fit([x.lines for x in self.model.Config[self.keyTrain]],
+                                                                   [x.nlabs for x in self.model.Config[self.keyTrain]])
+            self.model.trainArrays = wev.transform([x.lines for x in self.model.Config[self.keyTrain]])
+            self.model.trainLabels = mlb.fit_transform([x.nlabs for x in self.model.Config[self.keyTrain]])
+            if not self.model.isCV:
+                with open(fullPath(self.model.Config, "binarizerpath"), 'wb') as handle:
+                    pickle.dump(mlb, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                handle.close()
+                with open(fullPath(self.model.Config, "vectorizerpath"), 'wb') as handle:
+                    pickle.dump(wev, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                handle.close()
         if mlb == None:
             with open(fullPath(self.model.Config, "binarizerpath"), 'rb') as handle:
                 mlb = pickle.load(handle)
@@ -198,7 +226,7 @@ class DataPreparation:
             with open(fullPath(self.model.Config, "vectorizerpath"), 'rb') as handle:
                 wev = pickle.load(handle)
             handle.close()
-        self.model.testArrays = wev.transform([x.lines for x in self.model.Config["testdocs"]])
-        self.model.testLabels = mlb.fit_transform([x.nlabs for x in self.model.Config["testdocs"]])
+        self.model.testArrays = wev.transform([x.lines for x in self.model.Config[self.keyTest]])
+        self.model.testLabels = mlb.fit_transform([x.nlabs for x in self.model.Config[self.keyTest]])
         de = datetime.datetime.now()
         print("Prepare all data in %s" % (showTime(ds, de)))
