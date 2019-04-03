@@ -5,10 +5,13 @@ import gensim
 import math
 import statistics
 import datetime
-import matplotlib.pyplot as plt
+import nltk
+import subprocess
+from subprocess import run, PIPE
 from nltk.corpus import stopwords
 from collections import namedtuple
 from Data.plots import *
+from Tokenization.utils import ArabicNormalizer
 from Utils.utils import fullPath, updateParams, showTime
 
 LabeledDocument = namedtuple('LabeledDocument', 'lines words labels nlabs qLabs name')
@@ -55,6 +58,24 @@ class DataLoader:
                 print("Wrong size of vectors' dimentions. Stop.")
                 Config["error"] = True
                 return
+            if Config["datatoks"] == "yes":
+                if Config["actualtoks"] == "yes":
+                    taggerPath = fullPath(Config, 'rttaggerpath')
+                    if (self.Config["rttaggerpath"] == 0 or not os.path.exists(taggerPath)):
+                        print("Wrong path to the tagger's jar. Tokenization can't be done")
+                        Config["error"] = True
+                        return
+                    self.jar = subprocess.Popen(
+                            'java -Xmx2g -jar ' + taggerPath + ' "' + self.Config["expos"] + '"',
+                            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                            encoding="utf-8")
+                if self.Config["stopwords"] == "yes":
+                    self.stopWords = set(nltk.corpus.stopwords.words('arabic'))
+                else:
+                    self.stopWords = set()
+                if self.Config["normalization"] == "yes":
+                    self.normalizer = ArabicNormalizer()
+
             self.Config["resources"]["w2v"]["modelPath"] = fullPath(Config, "w2vmodelpath")
             self.Config["resources"]["w2v"]["ndim"] = self.ndim
             self.loadW2VModel()
@@ -66,7 +87,10 @@ class DataLoader:
             self.analysis()
 
     def loadData(self):
-        print ("Start loading data...")
+        if self.Config["datatoks"] == "yes":
+            print("Start loading and preprocessing of data...")
+        else:
+            print ("Start loading data...")
         ds = datetime.datetime.now()
         self.Config["cats"] = self.getCategories(fullPath(self.Config, "trainpath"))
         traindocs = self.getDataDocs(fullPath(self.Config, "trainpath"))
@@ -81,6 +105,9 @@ class DataLoader:
         self.Config["testdocs"] = random.sample(testdocs, len(testdocs))
         self.getMaxSeqLen()
         self.getMaxCharsLength()
+        if self.Config["datatoks"] == "yes" and self.Config["actualtoks"] == "yes":
+            self.jar.stdin.write('!!! STOP !!!\n')
+            self.jar.stdin.flush()
         print ("Input data loaded in %s"%(showTime(ds, de)))
         print ("Training set contains %d documents."%(len(self.Config["traindocs"])))
         print ("Testing set contains %d documents."%(len(self.Config["testdocs"])))
@@ -119,6 +146,8 @@ class DataLoader:
                         for line in tc:
                             docCont += line.strip() + " "
                     tc.close()
+                    if self.Config["datatoks"] == "yes":
+                        docCont = self.tokenize(docCont)
                     words = docCont.strip().split()
                     labels = [0] * len(self.Config["cats"])
                     labels[curCategory] = 1
@@ -256,6 +285,19 @@ class DataLoader:
         self.Config["w2vmodel"] = gensim.models.KeyedVectors.load_word2vec_format(fullPath(self.Config, "w2vmodelpath"))
         de = datetime.datetime.now()
         print("Load W2V model (%s) in %s" % (fullPath(self.Config, "w2vmodelpath"), showTime(ds, de)))
+
+    def tokenize(self, text):
+        if self.Config["actualtoks"] == "yes":
+            self.jar.stdin.write(text + '\n')
+            self.jar.stdin.flush()
+            text = self.jar.stdout.readline().strip()
+        words = [w for w in text.strip().split() if w not in self.stopWords]
+        words = [w for w in words if w not in self.Config["extrawords"]]
+        if self.Config["normalization"] == "yes":
+            words = [self.normalizer.normalize(w) for w in words]
+        text = " ".join(words)
+        return text
+
 
 def composeTsv(model, type):
     cNames = [''] * len(model.Config["cats"])
