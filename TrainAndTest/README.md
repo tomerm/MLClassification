@@ -151,4 +151,4 @@ reportsPath | <path> | Path to the folder containing reports
 saveResources | yes/no | Collect artifacts for runtime
 resourcesPath | <path> | Path to the folder containing collected artifacts. Content of this folder should be copied into folder /app/resources belonging to repository MLClassificationDocker.
 
-_Note: folder `resourcePath` will contain only those resources, which belong to the models, tested in current pipe._
+_Note: folder `resourcePath` will contain only those resources, which belong to the models, tested in current pipe. Resources, used by models in cross-validation mode, aren't saved.
