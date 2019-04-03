@@ -131,10 +131,9 @@ vectorizerPath | <path> | Relative path to vectorizer (saved with some specific 
 bertPath | <.../pytorch_bert.gz> | Relative path to the gz file, containing pre-trained BERT model
 bertOutPath | <path> | Path to the folder with resulting BERT files
 showMetrics | yes/no | Need to show testing results (model's metrics) 
-kfold | 10 | Number of cross-validation loops
-pSize | 0.2 | Size of the testing set in each loop of cross-validation process.
-
-**TBD: currently cross-validation isn't realized.**
+kfold | 10 | Number of cross-validation cycles
+vSave | yes/no | Need to save datasets, correpond to the cross-validation cycle with the best results
+cvPath | <path> | Path to the folder containing datasets used in cross-validation cycle with the best results
 
 ## Collector
 _Collector_ is a process which, if required, can perform the following tasks:
@@ -150,4 +149,6 @@ showResults | yes/no | Show consolidated results
 reports | yes/no | Calculate and save reports (**TBD**)
 reportsPath | <path> | Path to the folder containing reports
 saveResources | yes/no | Collect artifacts for runtime
-resourcesPath | <path> | Path to the folder containing collected artifacts
+resourcesPath | <path> | Path to the folder containing collected artifacts. Content of this folder should be copied into folder /app/resources belonging to repository MLClassificationDocker.
+
+_Note: folder `resourcePath` will contain only those resources, which belong to the models, tested in current pipe._
