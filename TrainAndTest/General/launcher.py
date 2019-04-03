@@ -60,7 +60,7 @@ def parseRequestAndLaunchPipe(parser, req):
             options = definition.split(";")
             for j in range(len(options)):
                 kvs = options[j].split("=");
-                if kvs[0] not in Config:
+                if kvs[0].lower() not in Config:
                     print ("Request contains wrong parameter ('%s') of process '%s'. Stop."%(kvs[0], process))
                     return
                 for k in range(len(kvs)):

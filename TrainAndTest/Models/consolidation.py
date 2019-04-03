@@ -47,6 +47,7 @@ class Collector:
             if len(os.listdir(fullPath(self.Config, "resourcespath"))) > 0:
                 print ("Warning: folder %s is not empty. All its content will be deleted."%(
                                 fullPath(self.Config, "resourcespath")))
+                shutil.rmtree(fullPath(self.Config, "resourcespath"))
                 os.makedirs(fullPath(self.Config, "resourcespath"), exist_ok=True)
             print("\nCollect arfifacts for runtime...")
             self.saveResources()

@@ -32,16 +32,19 @@ class SnnModel(BaseModel):
             print ("Wrong size of vectors' dimentions. Stop.")
             Config["error"] = True
             return
+        self.addValSet = True
+        self.handleType = "wordVectorsSum"
         self.tempSave = Config["tempsave"] == "yes"
         self.useProbabilities = True
         self.w2vModel = None
         self.loadW2VModel()
-        self.prepareData()
+        if Config["runfor"] != "crossvalidation":
+            self.prepareData()
         self.launchProcess()
 
     def prepareData(self):
         print ("Start data preparation...")
-        dp = DataPreparation(self, True)
+        dp = DataPreparation(self, self.addValSet)
         dp.getWordVectorsSum()
 
     def createModel(self):

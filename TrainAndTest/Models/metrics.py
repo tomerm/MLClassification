@@ -56,6 +56,7 @@ class ModelMetrics:
         actual = labels[index] == 1
         if self.useProbabilities:
             predicted = predictions[index] >= self.rankThreshold
+            """
             if actual and not predicted and self.diffThreshold > 0:
                 notActual = 0
                 for i in range(len(predictions)):
@@ -67,6 +68,7 @@ class ModelMetrics:
                             return True, False
                 if notActual > 0:
                     return True, True
+            """
         else:
             predicted = predictions[index] == 1
         return actual, predicted

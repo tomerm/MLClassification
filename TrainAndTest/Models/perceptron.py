@@ -22,7 +22,9 @@ class PerceptronModel(BaseModel):
                 Config["error"] = True
                 return
         self.useProbabilities = False
-        self.prepareData()
+        self.handleType = "vectorize"
+        if Config["runfor"] != "crossvalidation":
+            self.prepareData()
         self.launchProcess()
 
     def prepareData(self):
