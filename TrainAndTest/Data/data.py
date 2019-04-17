@@ -47,6 +47,23 @@ class DataLoader:
                 print ("Wrong size of testing set. Data can't be loaded.")
                 Config["error"] = True
                 return
+        if Config["datatoks"] == "yes":
+            if Config["actualtoks"] == "yes":
+                taggerPath = fullPath(Config, 'rttaggerpath')
+                if (self.Config["rttaggerpath"] == 0 or not os.path.exists(taggerPath)):
+                    print("Wrong path to the tagger's jar. Preprocessing can't be done")
+                    Config["error"] = True
+                    return
+                self.jar = subprocess.Popen(
+                        'java -Xmx2g -jar ' + taggerPath + ' "' + self.Config["expos"] + '"',
+                        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                        encoding="utf-8")
+            if self.Config["stopwords"] == "yes":
+                self.stopWords = set(nltk.corpus.stopwords.words('arabic'))
+            else:
+                self.stopWords = set()
+            if self.Config["normalization"] == "yes":
+                self.normalizer = ArabicNormalizer()
         if Config["w2vload"] == "yes":
             if len(Config["w2vmodelpath"]) == 0 or not os.path.isfile(fullPath(Config, "w2vmodelpath")):
                 print("Wrong path to W2V model. Stop.")
@@ -58,24 +75,6 @@ class DataLoader:
                 print("Wrong size of vectors' dimentions. Stop.")
                 Config["error"] = True
                 return
-            if Config["datatoks"] == "yes":
-                if Config["actualtoks"] == "yes":
-                    taggerPath = fullPath(Config, 'rttaggerpath')
-                    if (self.Config["rttaggerpath"] == 0 or not os.path.exists(taggerPath)):
-                        print("Wrong path to the tagger's jar. Preprocessing can't be done")
-                        Config["error"] = True
-                        return
-                    self.jar = subprocess.Popen(
-                            'java -Xmx2g -jar ' + taggerPath + ' "' + self.Config["expos"] + '"',
-                            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                            encoding="utf-8")
-                if self.Config["stopwords"] == "yes":
-                    self.stopWords = set(nltk.corpus.stopwords.words('arabic'))
-                else:
-                    self.stopWords = set()
-                if self.Config["normalization"] == "yes":
-                    self.normalizer = ArabicNormalizer()
-
             self.Config["resources"]["w2v"]["modelPath"] = fullPath(Config, "w2vmodelpath")
             self.Config["resources"]["w2v"]["ndim"] = self.ndim
             self.loadW2VModel()
