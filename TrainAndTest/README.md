@@ -133,7 +133,7 @@ bertPath | <.../pytorch_bert.gz> | Relative path to the gz file, containing pre-
 bertOutPath | <path> | Path to the folder with resulting BERT files
 showMetrics | yes/no | Need to show testing results (model's metrics) 
 kfold | 10 | Number of cross-validation cycles
-vSave | yes/no | Need to save datasets, correpond to the cross-validation cycle with the best results
+cvSave | yes/no | Need to save datasets, correpond to the cross-validation cycle with the best results
 cvPath | <path> | Path to the folder containing datasets used in cross-validation cycle with the best results
 
 ## Collector
