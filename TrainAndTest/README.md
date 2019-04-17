@@ -14,7 +14,7 @@ Content of the request should be placed into configuration file as a value of op
 
 ## Content of user's request. Default and actual parameters.
 Currently we support 5 types of processes. Each of them has its own symbol, by which it is designated in the request:
-- T  -  tokenization of the source text
+- P  -  preprocessing of the source text
 - W  -  word embedding
 - D  -  data loading
 - M  -  create/train/test specific model
@@ -47,23 +47,20 @@ _Note: Configuration file additionaly contains section 'root', which doesn't bel
 defines the root folder, where all related data should be placed. All other options, which defines references to different 
 places in the file system, should contain paths relative to the root._
 
-## Tokenization
-_Tokenization_ is completely independent process, but it can be included into the chain with other process, if they need 
-to load the data, which was not tokenized yet. In this case source file (or folder) for these processes should be set the 
-same, as target file (or folder) for _Tokenization_.
+## Preprocess
+_Preprocess_ is completely independent process, but it can be included into the chain with other process, if they need 
+to load the data, which was not preprocessed yet. In this case source file (or folder) for these processes should be set the 
+same, as target file (or folder) for _Preprocess_.
 
 #### Parameters:
 
 Name | Possible values | Comments
 --- | --- | ---
 actualTocs | *yes*/no | 'yes' defines langiage-specific tokenization, no - simple white space tokenization
-typeTocs | *tagger*/server | 'tagger' defines tokenization using wrapper for StanfordPosTagger, 'server' - by StanfordNLPServer  
 sourcePath | <path> | Relative path to the folder or file, containing source data.
 targetPath | <path> | Relative path to the folder or file, which will contain results of tokenization
-servSource | stanford-corenlp-full-2016-10-31 | Relative path to the folder, containing server's sources
-servPort | 9005 | Port used by server
-servStop | no | If 'yes', server will be stopped before launching
-taggerPath | <path> | Relative path to jar with tagger
+taggerPath | <path> | Relative path to jar with tagger, which performs all preprocessing
+rtTaggerPath | <path> | Relative path to jar with tagger, which performs tokenization only (used by DataLoader and in runtime)
 exPOS | PUNC,DT,IN,CD,PRP,RP,RB,W,PDT | List of POS's, which should be excluded from results of tokenization.
 normalization | yes/no | Defines the need in text normalization
 stopWords | yes/no | Defines the need to exclude stop words from results of tokenization.
@@ -94,7 +91,7 @@ _DataLoader_ load all data, needed for training and testing models (including W2
 the internal cache and can be reused by the other processes in the chain.     
 In addition it can perform per-line preprocessing of the data.
 
-_Note: per-line tokenization significantly slows down the data loading._
+_Note: per-line preprocessing significantly slows down the data loading._
 
 #### Parameters:
 
@@ -142,7 +139,7 @@ cvPath | <path> | Path to the folder containing datasets used in cross-validatio
 ## Collector
 _Collector_ is a process which, if required, can perform the following tasks:
 - Show consolidated results of testing of all models, used in the current chain
-- Create HTML reports (**TBD**) 
+- Create HTML reports
 - Create configuration file and collect all artifacts, needed for launching current chain in runtime.
 
 #### Parameters
@@ -150,9 +147,18 @@ _Collector_ is a process which, if required, can perform the following tasks:
 Name | Possible Values | Comments
 --- | --- | ---
 showResults | yes/no | Show consolidated results
-reports | yes/no | Calculate and save reports (**TBD**)
+reports | yes/no | Calculate and save reports (as a files in json format)
 reportsPath | <path> | Path to the folder containing reports
 saveResources | yes/no | Collect artifacts for runtime
 resourcesPath | <path> | Path to the folder containing collected artifacts. Content of this folder should be copied into folder /app/resources belonging to repository MLClassificationDocker.
 
-_Note: folder `resourcePath` will contain only those resources, which belong to the models, tested in current pipe. Resources, used by models in cross-validation mode, aren't saved._
+_Note: folder `resourcePath` will contain only those resources, which belong to the model(s), tested in the current pipe. Resources, used by models in cross-validation mode, aren't saved._
+
+## Show and compare results of user's requests
+Results of user's requests, previously created and saved by the process _Collector_, can be converted into HTML form and shown by  the script _info.py_, launched with one required parameter - path to specific configuration file, for example:
+
+`python info.py config.cfg`
+
+In general it is the same configuration file, which was used by the script `start`. Data needed for `info.py`, should be placed there as a value of the option _infofrom_ from the section _requests_. This option defines the period, in which requests were created, and may contain or word "today", or text in the form `X days`, here X is any number.    
+
+Example of resulting HTML file (`curInfo.html`) can be found in the current folder.
