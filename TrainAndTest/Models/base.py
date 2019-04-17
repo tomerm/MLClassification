@@ -161,6 +161,7 @@ class BaseModel:
 
     def saveResults(self):
         self.Config["results"][self.Config["name"]] = self.predictions
+        self.Config["metrics"][self.Config["name"]] = self.metrics
 
     def saveResources(self, type):
         self.resources["modelPath"] = fullPath(self.Config, "modelpath", opt="name")

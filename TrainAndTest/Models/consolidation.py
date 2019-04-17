@@ -6,6 +6,7 @@ import json
 import datetime
 from Models.metrics import ModelMetrics, printMetrics
 from Utils.utils import fullPath, showTime
+from Models.reports import Report
 
 class Collector:
     def __init__(self, Config):
@@ -20,6 +21,7 @@ class Collector:
         self.predictions = numpy.zeros([len(self.testLabels), self.qLabs])
         self.rankThreshold = 0.5
         self.diffThreshold = 10
+        self.metrics = {}
         self.useProbabilities = False
         self.reports = False
         self.runtime = False
@@ -32,8 +34,8 @@ class Collector:
             if len(Config["reportspath"]) == 0 or not os.path.isdir(fullPath(Config, "reportspath")):
                 print ("Wrong path to the folder, containing reports.")
                 print ("Reports can't be created.")
-        else:
-            self.reports = True
+            else:
+                self.reports = True
         if Config["saveresources"] == "yes":
             if len(Config["resourcespath"]) == 0 or not os.path.isdir(fullPath(Config, "resourcespath")):
                 print ("Wrong path to the folder, containing resources for runtime.")
@@ -43,6 +45,8 @@ class Collector:
         if self.reports or self.Config["showresults"] == "yes":
             self.getConsolidatedResults()
             self.getMetrics()
+            if self.reports:
+                self.saveReports()
         if self.runtime:
             if len(os.listdir(fullPath(self.Config, "resourcespath"))) > 0:
                 print ("Warning: folder %s is not empty. All its content will be deleted."%(
@@ -61,18 +65,6 @@ class Collector:
                         self.predictions[i][j] += 1
                     elif res[i][j] >= self.rankThreshold:
                         self.predictions[i][j] += 1
-                    else:
-                        notActuals = 0
-                        for k in range(self.qLabs):
-                            if k == j:
-                                continue
-                            if self.testLabels[i][k] == 0:
-                                notActuals += 1
-                                if res[i][k] == 0 or ((res[i][j] / res[i][k]) < self.diffThreshold):
-                                    notActuals = 0
-                                    break
-                        if notActuals > 0:
-                            self.predictions[i][j] += 1
         qModels = len(self.Config["results"])
         for i in range(len(self.predictions)):
             for j in range(len(self.predictions[i])):
@@ -85,6 +77,50 @@ class Collector:
         ModelMetrics(self)
         if self.Config["showresults"] == "yes":
             printMetrics(self)
+
+    def saveReports(self):
+        print ("Save report...")
+        report = Report()
+        report.requestId = self.Config["reqid"]
+        report.sourcesPath = self.Config["actualpath"]
+        report.datasetPath = self.Config["testpath"]
+
+        tokOpts = ["actualtoks", "normalization", "stopwords", "expos", "extrawords", "excats"]
+        for i in range(len(tokOpts)):
+            report.preprocess[tokOpts[i]] = self.Config[tokOpts[i]]
+        for i in range(len(self.Config["testdocs"])):
+            report.docs[self.Config["testdocs"][i].name] = {}
+            report.docs[self.Config["testdocs"][i].name]["actual"] = ",".join(self.Config["testdocs"][i].nlabs)
+        if len(self.Config["excats"]) == 0:
+            exCats = []
+        else:
+            exCats = self.Config["excats"].split(",")
+        cNames = [''] * (len(self.Config["cats"]) - len(exCats))
+        for k, v in self.Config["cats"].items():
+            if k not in exCats:
+                cNames[v] = k
+        report.categories = cNames
+        for key, val in self.Config["results"].items():
+            for i in range(len(val)):
+                labs = []
+                for j in range(self.qLabs):
+                    if val[i][j] >= self.rankThreshold:
+                        labs.append(cNames[j])
+                report.docs[self.Config["testdocs"][i].name][key] = ",".join(labs)
+        for key, val in self.Config["metrics"].items():
+            report.models[key] = val
+        if len(self.Config["results"]) > 1:
+            for i in range(len(self.predictions)):
+                labs = []
+                for j in range(self.qLabs):
+                    if self.predictions[i][j] == 1:
+                        labs.append(cNames[j])
+                report.docs[self.Config["testdocs"][i].name]["consolidated"] = ",".join(labs)
+            report.models["consolidated"] = self.metrics
+        rPath = fullPath(self.Config, "reportspath") + "/" + self.Config["reqid"] + ".json"
+        with open(rPath, 'w', encoding="utf-8") as file:
+            json.dump(report.toJSON(), file, indent=4)
+        file.close()
 
     def saveResources(self):
         tokOpts = ["actualtoks", "normalization", "stopwords", "expos", "extrawords",

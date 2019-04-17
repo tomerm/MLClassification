@@ -11,7 +11,7 @@ from subprocess import run, PIPE
 from nltk.corpus import stopwords
 from collections import namedtuple
 from Data.plots import *
-from Tokenization.utils import ArabicNormalizer
+from Preprocess.utils import ArabicNormalizer
 from Utils.utils import fullPath, updateParams, showTime
 
 LabeledDocument = namedtuple('LabeledDocument', 'lines words labels nlabs qLabs name')
@@ -62,7 +62,7 @@ class DataLoader:
                 if Config["actualtoks"] == "yes":
                     taggerPath = fullPath(Config, 'rttaggerpath')
                     if (self.Config["rttaggerpath"] == 0 or not os.path.exists(taggerPath)):
-                        print("Wrong path to the tagger's jar. Tokenization can't be done")
+                        print("Wrong path to the tagger's jar. Preprocessing can't be done")
                         Config["error"] = True
                         return
                     self.jar = subprocess.Popen(
@@ -147,7 +147,7 @@ class DataLoader:
                             docCont += line.strip() + " "
                     tc.close()
                     if self.Config["datatoks"] == "yes":
-                        docCont = self.tokenize(docCont)
+                        docCont = self.preprocess(docCont)
                     words = docCont.strip().split()
                     labels = [0] * len(self.Config["cats"])
                     labels[curCategory] = 1
@@ -171,7 +171,7 @@ class DataLoader:
         input_length_dict = {x: 0 for x in input_length_list}
         for i in range(len(self.Config["traindocs"])):
             curLen = len(self.Config["traindocs"][i].words)
-            dictLen = maxLen
+            dicLen = maxLen
             for ln in input_length_dict:
                 if curLen < ln:
                     dicLen = ln
@@ -201,7 +201,7 @@ class DataLoader:
         input_length_dict = {x: 0 for x in input_length_list}
         for i in range(len(self.Config["traindocs"])):
             curLen = len(self.Config["traindocs"][i].lines)
-            dictLen = maxLen
+            dicLen = maxLen
             for ln in input_length_dict:
                 if curLen < ln:
                     dicLen = ln
@@ -286,7 +286,7 @@ class DataLoader:
         de = datetime.datetime.now()
         print("Load W2V model (%s) in %s" % (fullPath(self.Config, "w2vmodelpath"), showTime(ds, de)))
 
-    def tokenize(self, text):
+    def preprocess(self, text):
         if self.Config["actualtoks"] == "yes":
             self.jar.stdin.write(text + '\n')
             self.jar.stdin.flush()

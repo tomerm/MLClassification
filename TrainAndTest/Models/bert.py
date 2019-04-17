@@ -242,6 +242,7 @@ class BertModel(BaseModel):
         if self.Config["runfor"] != "crossvalidation":
             self.saveResources("torch")
         self.getMetrics()
+        self.saveResults()
 
     def saveResources(self, type):
         self.resources["id"] = str(self.Config["modelid"])
