@@ -7,7 +7,7 @@ from keras.callbacks import ModelCheckpoint
 from sklearn.externals import joblib
 from sklearn.metrics import accuracy_score
 from Utils.utils import fullPath
-from Models.metrics import metricsNames, printMetrics
+from Models.metrics import metricsNames, printMetrics, printAveragedMetrics
 from Models.metrics import ModelMetrics
 from Models.dataPreparation import DataPreparation
 from Utils.utils import leftAlign, showTime
@@ -181,6 +181,7 @@ class BaseModel:
         pSize = len(self.cvDocs) // self.kfold
         ind = 0
         f1 = 0
+        arrMetrics =[]
         for i in range(self.kfold):
             print ("Cross-validation, cycle %d from %d..."%((i+1), self.kfold))
             if i == 0:
@@ -198,6 +199,7 @@ class BaseModel:
             self.trainModel()
             self.testModel()
             ModelMetrics(self)
+            arrMetrics.append(self.metrics)
             cycleF1 = self.metrics["all"]["f1"]
             print ("Resulting F1-Measure: %f\n"%(cycleF1))
             if cycleF1 > f1:
@@ -206,8 +208,10 @@ class BaseModel:
                 f1 = cycleF1
         de = datetime.datetime.now()
         print ("Cross-validation is done in %s"%(showTime(ds, de)))
+        printAveragedMetrics(arrMetrics, self.Config)
         print ("The best result is %f"%(f1))
         print ("Corresponding data sets are saved in the folder %s"%(fullPath(self.Config, "cvpath")))
+
 
     def saveDataSets(self):
         root = fullPath(self.Config, "cvpath")

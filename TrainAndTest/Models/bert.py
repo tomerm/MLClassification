@@ -13,6 +13,7 @@ from Models.base import BaseModel
 from Models.bertClassifier import BertForMultiLabelSequenceClassification, \
      Args, DataProcessor, convert_examples_to_features, getLogger, accuracy
 from Data.data import composeTsv
+from Models.metrics import printAveragedMetrics
 from Utils.utils import fullPath, showTime
 
 class BertModel(BaseModel):
@@ -264,6 +265,7 @@ class BertModel(BaseModel):
         pSize = len(self.cvDocs) // self.kfold
         ind = 0
         f1 = 0
+        arrMetrics =[]
         for i in range(self.kfold):
             print ("Cross-validation, cycle %d from %d..."%((i+1), self.kfold))
             if i == 0:
@@ -280,6 +282,7 @@ class BertModel(BaseModel):
             self.model = self.createModel()
             self.trainModel()
             self.testModel()
+            arrMetrics.append(self.metrics)
             cycleF1 = self.metrics["all"]["f1"]
             print ("Resulting F1-Measure: %f\n"%(cycleF1))
             if cycleF1 > f1:
@@ -288,6 +291,7 @@ class BertModel(BaseModel):
                 f1 = cycleF1
         de = datetime.datetime.now()
         print ("Cross-validation is done in %s"%(showTime(ds, de)))
+        printAveragedMetrics(arrMetrics, self.Config)
         print ("The best result is %f"%(f1))
         print ("Corresponding data sets are saved in the folder %s"%(fullPath(self.Config, "cvpath")))
 
