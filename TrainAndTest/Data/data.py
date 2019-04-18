@@ -97,6 +97,7 @@ class DataLoader:
             testdocs = self.getDataDocs(fullPath(self.Config, "testpath"))
         else:
             ind = int(len(traindocs) * (1 - self.sz))
+            random.shuffle(traindocs)
             testdocs = traindocs[ind:]
             traindocs = traindocs[:ind]
         de = datetime.datetime.now()
