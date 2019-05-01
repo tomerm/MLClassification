@@ -141,7 +141,22 @@ class Collector:
         if not isW2VNeeded and "w2v" in self.Config["resources"]:
             self.Config["resources"].pop("w2v", None)
         if "w2v" in self.Config["resources"]:
-            self.Config["resources"]["w2v"]["modelPath"] = self.copyFile(self.Config["resources"]["w2v"]["modelPath"])
+            w2vDict = {}
+            isFirstLine = True
+            fEmbeddings = open(self.Config["resources"]["w2v"]["modelPath"], encoding="utf-8")
+            for line in fEmbeddings:
+                if isFirstLine == True:
+                    isFirstLine = False
+                    continue
+                split = line.strip().split(" ")
+                word = split[0]
+                vector = numpy.array([float(num) for num in split[1:]])
+                w2vDict[word] = vector
+            fEmbeddings.close()
+            with open(self.Config["resources"]["w2v"]["modelPath"] + '.pkl', 'wb') as file:
+                pickle.dump(w2vDict, file, pickle.HIGHEST_PROTOCOL)
+            file.close()
+            self.Config["resources"]["w2v"]["modelPath"] = self.copyFile(self.Config["resources"]["w2v"]["modelPath"] + '.pkl')
         if "indexer" in self.Config["resources"]:
             self.Config["resources"]["indexer"] = self.copyFile(self.Config["resources"]["indexer"])
         if "vectorizer" in self.Config["resources"]:
