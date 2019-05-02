@@ -129,8 +129,9 @@ class Collector:
         ds = datetime.datetime.now()
         self.outDir = fullPath(self.Config, "resourcespath") + "/"
         for i in range(len(tokOpts)):
-            self.Config["resources"]["tokenization"][tokOpts[i]] = self.Config[tokOpts[i]]
-            if self.Config["actualtoks"] == "yes" and tokOpts[i] == "rttaggerpath":
+            if tokOpts[i] != "rttaggerpath":
+                self.Config["resources"]["tokenization"][tokOpts[i]] = self.Config[tokOpts[i]]
+            elif self.Config["actualtoks"] == "yes":
                 self.Config["resources"]["tokenization"]["rttaggerpath"] = \
                     self.copyFile(fullPath(self.Config, "rttaggerpath"))
         isW2VNeeded = False
