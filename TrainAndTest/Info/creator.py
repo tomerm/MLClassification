@@ -49,23 +49,23 @@ class InfoCreator:
         funcjs = ""
         with open(self.curDir + "/scripts.js", 'r', encoding='UTF-8') as tc:
             for line in tc:
-                css += line
+                funcjs += line
         tc.close()
         with open(self.curDir + "/styles.css", 'r', encoding='UTF-8') as tc:
             for line in tc:
-                funcjs += line
+                css += line
         tc.close()
-        return css, funcjs
+        return funcjs, css
 
     def createHtml(self):
-        css, fjs = self.getCssAndJs()
+        fjs, css = self.getCssAndJs()
         self.html = "<!DOCTYPE html><html><head><meta charset='utf-8' />"
-        self.html = "<style>" + css + "</style>"
+        self.html += "<style>" + css + "</style>"
         #self.html += "<link rel='stylesheet' type='text/css' href='%s/styles.css'>"%(self.curDir)
         self.html += "<script type='text/javascript'>var fullInfo='%s'</script>" % (json.dumps(self.info))
         self.html += "<script type='text/javascript'>var docsInfo='%s'</script>" % (json.dumps(self.docsDict))
         #self.html += "<script type='text/javascript' src='%s/scripts.js'></script>"%(self.curDir)
-        self.html = "<script type='text/javascript>" + fjs + "</script>"
+        self.html += "<script type='text/javascript'>" + fjs + "</script>"
         self.html += "</head><body>"
         self.html += "<h2 style='text-align:center'>Compare models</h2>"
         self.html += "<hr style='height: 1px; width: 100%'>"
@@ -79,8 +79,9 @@ class InfoCreator:
         self.html += "<div style='overflow: auto; width: 100%; height: 100%;'>"
         self.html += "<table id='reqlist' style='width:100%'>"
         for key, val in self.info.items():
+            kuku = "KUKU"
             self.html += "<tr style='height: 20px'><td style='width:15%'><input type='checkbox' class='chk' "
-            self.html += "onclick='addRequest(this, %s)' "%(key)
+            self.html += "onclick='addRequest(this, %s)' " % (key)
             self.html += "id='chk_" + key + "' /></td>"
             self.html += "<td style='text-align: center' >" + key + "</td></tr>"
         self.html += "</table></div></div></td>"
