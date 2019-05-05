@@ -79,7 +79,6 @@ class InfoCreator:
         self.html += "<div style='overflow: auto; width: 100%; height: 100%;'>"
         self.html += "<table id='reqlist' style='width:100%'>"
         for key, val in self.info.items():
-            kuku = "KUKU"
             self.html += "<tr style='height: 20px'><td style='width:15%'><input type='checkbox' class='chk' "
             self.html += "onclick='addRequest(this, %s)' " % (key)
             self.html += "id='chk_" + key + "' /></td>"
