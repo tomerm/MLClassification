@@ -44,28 +44,12 @@ class InfoCreator:
         self.docsDict = self.getDocsDictionary()
         self.createHtml()
 
-    def getCssAndJs(self):
-        css = ""
-        funcjs = ""
-        with open(self.curDir + "/scripts.js", 'r', encoding='UTF-8') as tc:
-            for line in tc:
-                css += line
-        tc.close()
-        with open(self.curDir + "/styles.css", 'r', encoding='UTF-8') as tc:
-            for line in tc:
-                funcjs += line
-        tc.close()
-        return css, funcjs
-
     def createHtml(self):
-        css, fjs = self.getCssAndJs()
         self.html = "<!DOCTYPE html><html><head><meta charset='utf-8' />"
-        self.html = "<style>" + css + "</style>"
-        #self.html += "<link rel='stylesheet' type='text/css' href='%s/styles.css'>"%(self.curDir)
+        self.html += "<link rel='stylesheet' type='text/css' href='%s/styles.css'>"%(self.curDir)
         self.html += "<script type='text/javascript'>var fullInfo='%s'</script>" % (json.dumps(self.info))
         self.html += "<script type='text/javascript'>var docsInfo='%s'</script>" % (json.dumps(self.docsDict))
-        #self.html += "<script type='text/javascript' src='%s/scripts.js'></script>"%(self.curDir)
-        self.html = "<script type='text/javascript>" + fjs + "</script>"
+        self.html += "<script type='text/javascript' src='%s/scripts.js'></script>"%(self.curDir)
         self.html += "</head><body>"
         self.html += "<h2 style='text-align:center'>Compare models</h2>"
         self.html += "<hr style='height: 1px; width: 100%'>"
