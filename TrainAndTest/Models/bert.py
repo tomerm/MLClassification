@@ -250,7 +250,7 @@ class BertModel(BaseModel):
         self.resources["modelPath"] = fullPath(self.Config, "bertoutpath", opt="name")
         self.resources["modelType"] = type
         if not "ptBertModel" in self.Config["resources"]:
-            self.Config["resources"]["ptBertModel"] = self.arsg.bert_model
+            self.Config["resources"]["ptBertModel"] = self.args.bert_model
             self.Config["resources"]["vocabPath"] = self.vocabPath
         self.resources["ptBertModel"] = "yes"
         self.resources["handleType"] = "bert"
