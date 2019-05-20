@@ -100,14 +100,14 @@ def parseConfigInfo(path):
             Config["infofrom"] = "today"
         if Config["infofrom"] != "today":
             chk = Config["infofrom"].split()
-        if len(chk) != 2 and not chk[1].startswith("day"):
-            print ("Wrong value of 'infofrom' option. Exit.")
-            return
-        try:
-            days = int(chk[0])
-        except ValueError:
-            print ("Wrong value of 'infofrom' option. Exit.")
-            return
+            if len(chk) != 2 and not chk[1].startswith("day"):
+                print ("Wrong value of 'infofrom' option. Exit.")
+                return
+            try:
+                days = int(chk[0])
+            except ValueError:
+                print ("Wrong value of 'infofrom' option. Exit.")
+                return
         if len(Config["reportspath"]) == 0 or not os.path.isdir(fullPath(Config, "reportspath")):
             print("Wrong path to the folder, containing reports. Exit.")
             return
