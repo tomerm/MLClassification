@@ -135,6 +135,8 @@ showMetrics | yes/no | Need to show testing results (model's metrics)
 kfold | 10 | Number of cross-validation cycles
 cvSave | yes/no | Need to save datasets, correpond to the cross-validation cycle with the best results
 cvPath | <path> | Path to the folder containing datasets used in cross-validation cycle with the best results
+customRank | yes/no | Use default (0.5) or custom rank threshold
+rankThreshold | <=1.0 | Value of custom rank threshold
 
 ## Collector
 _Collector_ is a process which, if required, can perform the following tasks:
@@ -151,6 +153,8 @@ reports | yes/no | Calculate and save reports (as a files in json format)
 reportsPath | <path> | Path to the folder containing reports
 saveResources | yes/no | Collect artifacts for runtime
 resourcesPath | <path> | Path to the folder containing collected artifacts. Content of this folder should be copied into folder /app/resources belonging to repository MLClassificationDocker.
+consolidatedRank | yes/no | Use default (0.5) or custom rank for consolidated results
+consolidatedRankThreshold | <=1.0 | Value of custom rank threshold for consolidated results
 
 _Note: folder `resourcePath` will contain only those resources, which belong to the model(s), tested in the current pipe. Resources, used by models in cross-validation mode, aren't saved._
 
