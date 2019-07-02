@@ -31,6 +31,7 @@ def parseConfig(path):
         Config["modelid"] = 0
         Config["results"] = {}
         Config["metrics"] = {}
+        Config["ranks"] = {}
         Config["resources"] = {}
         Config["resources"]["reqid"] = Config["reqid"]
         Config["resources"]["models"] = {}

@@ -174,7 +174,7 @@ class BertModel(BaseModel):
             else:
                 res = numpy.concatenate((res, preds))
                 allLabs = numpy.concatenate((allLabs, labs))
-            tmp_eval_accuracy = accuracy(logits, label_ids)
+            tmp_eval_accuracy = accuracy(logits, label_ids, self.rankThreshold)
             eval_loss += tmp_eval_loss.mean().item()
             eval_accuracy += tmp_eval_accuracy
             nb_eval_examples += input_ids.size(0)
@@ -189,6 +189,7 @@ class BertModel(BaseModel):
 
     def testModel(self):
         print ("Start testing...")
+        print("Rank threshold: %.2f"%(self.rankThreshold))
         ds = datetime.datetime.now()
         if self.model_to_save == None:
             output_model_file = fullPath(self.Config, "bertoutpath", opt="name")
@@ -232,12 +233,13 @@ class BertModel(BaseModel):
             else:
                 res = numpy.concatenate((res, preds))
                 allLabs = numpy.concatenate((allLabs, labs))
-            tmp_eval_accuracy = accuracy(logits, label_ids)
+            tmp_eval_accuracy = accuracy(logits, label_ids, self.rankThreshold)
             eval_loss += tmp_eval_loss.mean().item()
             eval_accuracy += tmp_eval_accuracy
             nb_eval_examples += input_ids.size(0)
             nb_eval_steps += 1
         self.predictions = res
+        self.testLabels = allLabs
         de = datetime.datetime.now()
         print("Test dataset containing %d documents predicted in %s\n" % (len(eval_examples), showTime(ds, de)))
         if self.Config["runfor"] != "crossvalidation":
@@ -254,6 +256,8 @@ class BertModel(BaseModel):
             self.Config["resources"]["vocabPath"] = self.vocabPath
         self.resources["ptBertModel"] = "yes"
         self.resources["handleType"] = "bert"
+        self.resources["rankThreshold"] = self.rankThreshold
+        self.Config["resources"]["models"]["Model" + str(self.Config["modelid"])] = self.resources
 
     def launchCrossValidation(self):
         print ("Start cross-validation...")
