@@ -89,13 +89,12 @@ class ModelController:
                 if len(Config["temppath"]) == 0 or not os.path.isdir(fullPath(Config, "temppath")):
                     print ("Wrong path to folder with intermediate results.")
                     stop = True
-        """
-        if Config["runfor"].lower() != "train":
-            if Config["modelinfo"] == "yes":
-                if len(Config["infopath"]) == 0 or not os.path.isdir(fullPath(Config, "infopath")):
-                    print ("Wrong path to folder containing model info.")
-                    stop = True
-        """
+        if Config["runfor"] != "train" and Config["customrank"] == "yes":
+            try:
+                self.rankThreshold = float(Config["rankthreshold"])
+            except ValueError:
+                print("Wrong custom rank threshold.")
+                stop = True
         if Config["runfor"] == "crossvalidation":
             if Config["cvsave"] == "yes":
                 if len(Config["cvpath"]) == 0 or not os.path.isdir(fullPath(Config, "cvpath")):

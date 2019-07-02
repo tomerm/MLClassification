@@ -29,12 +29,19 @@ class BaseModel:
         self.valSize = 0
         self.isCV = False
         self.handleType = ""
+        self.useProbabilities = False
 
         self.epochs = int(Config["epochs"])
         self.verbose = int(Config["verbose"])
         self.kfold = int(Config["kfold"])
         if self.verbose != 0:
             self.verbose = 1
+        if Config["customrank"] == "yes":
+            self.rankThreshold = float(Config["rankthreshold"])
+        else:
+            self.rankThreshold = 0.5
+        if self.rankThreshold == 0:
+            self.rankThreshold = 0.5
         self.trainBatch = int(Config["trainbatch"])
 
     def launchProcess(self):
@@ -130,6 +137,7 @@ class BaseModel:
 
     def testNNModel(self):
         print ("Start testing...")
+        print("Rank threshold: %.2f" % (self.rankThreshold))
         ds = datetime.datetime.now()
         self.predictions = self.model.predict(self.testArrays)
         de = datetime.datetime.now()
@@ -142,6 +150,7 @@ class BaseModel:
 
     def testSKLModel(self):
         print ("Start testing...")
+        print ("Model doesn't calculate probabilities.")
         ds = datetime.datetime.now()
         self.predictions = self.model.predict(self.testArrays)
         de = datetime.datetime.now()
@@ -162,10 +171,15 @@ class BaseModel:
     def saveResults(self):
         self.Config["results"][self.Config["name"]] = self.predictions
         self.Config["metrics"][self.Config["name"]] = self.metrics
+        if self.useProbabilities:
+            self.Config["ranks"][self.Config["name"]] = self.rankThreshold
+        else:
+            self.Config["ranks"][self.Config["name"]] = 1.0
 
     def saveResources(self, type):
         self.resources["modelPath"] = fullPath(self.Config, "modelpath", opt="name")
         self.resources["modelType"] = type
+        self.resources["rankThreshold"] = self.rankThreshold
         self.saveAdditions()
         if type == "skl":
             self.resources["handleType"] = "vectorize"

@@ -15,12 +15,16 @@ class Collector:
             print ("Documents have not been classified in this process chain.")
             print ("Consolidation can't be performed.")
             return
+        self.rankThreshold = 0.5
+        if Config['consolidatedrank'] == "yes":
+            try:
+                self.rankThreshold = float(Config["consolidatedrankthreshold"])
+            except ValueError:
+                self.rankThreshold = 0.5
         self.testLabels = numpy.concatenate([numpy.array(x.labels).
                                 reshape(1, len(self.Config["cats"])) for x in self.Config["testdocs"]])
         self.qLabs = len(self.Config["cats"])
         self.predictions = numpy.zeros([len(self.testLabels), self.qLabs])
-        self.rankThreshold = 0.5
-        self.diffThreshold = 10
         self.metrics = {}
         self.useProbabilities = False
         self.reports = False
@@ -42,6 +46,7 @@ class Collector:
                 print ("Resources can't be saved.")
             else:
                 self.runtime = True
+        print("Rank threshold for consolidated results: %.2f" % (self.rankThreshold))
         if self.reports or self.Config["showresults"] == "yes":
             self.getConsolidatedResults()
             self.getMetrics()
@@ -63,12 +68,13 @@ class Collector:
                 for j in range(self.qLabs):
                     if res[i][j] == 1:
                         self.predictions[i][j] += 1
-                    elif res[i][j] >= self.rankThreshold:
+                    #elif res[i][j] >= self.rankThreshold:
+                    elif res[i][j] >= self.Config["ranks"][key]:
                         self.predictions[i][j] += 1
         qModels = len(self.Config["results"])
         for i in range(len(self.predictions)):
             for j in range(len(self.predictions[i])):
-                if self.predictions[i][j] >= qModels / 2.0:
+                if self.predictions[i][j] >= qModels * self.rankThreshold:
                     self.predictions[i][j] = 1
                 else:
                     self.predictions[i][j] = 0
@@ -104,11 +110,14 @@ class Collector:
             for i in range(len(val)):
                 labs = []
                 for j in range(self.qLabs):
-                    if val[i][j] >= self.rankThreshold:
+                    #if val[i][j] >= self.rankThreshold:
+                    if val[i][j] >= self.Config["ranks"][key]:
                         labs.append(cNames[j])
                 report.docs[self.Config["testdocs"][i].name][key] = ",".join(labs)
         for key, val in self.Config["metrics"].items():
             report.models[key] = val
+        for key, val in self.Config["ranks"].items():
+            report.ranks[key] = val
         if len(self.Config["results"]) > 1:
             for i in range(len(self.predictions)):
                 labs = []
@@ -117,6 +126,7 @@ class Collector:
                         labs.append(cNames[j])
                 report.docs[self.Config["testdocs"][i].name]["consolidated"] = ",".join(labs)
             report.models["consolidated"] = self.metrics
+            report.ranks["consolidated"] = self.rankThreshold
         rPath = fullPath(self.Config, "reportspath") + "/" + self.Config["reqid"] + ".json"
         with open(rPath, 'w', encoding="utf-8") as file:
             json.dump(report.toJSON(), file, indent=4)
@@ -172,6 +182,7 @@ class Collector:
             file.write(",".join(cNames))
         file.close()
         self.Config["resources"]["labels"] = "labels.txt"
+        self.Config["resources"]["consolidatedRank"] = self.rankThreshold
         with open(self.outDir + 'config.json', 'w', encoding="utf-8") as file:
             json.dump(self.Config["resources"], file, indent=4)
         file.close()

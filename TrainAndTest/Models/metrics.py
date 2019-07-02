@@ -37,7 +37,7 @@ class ModelMetrics:
             self.cNames[v] = k
         self.cats = model.Config["cats"]
         self.useProbabilities = model.useProbabilities
-        self.rankThreshold = 0.5
+        self.rankThreshold = model.rankThreshold
         self.diffThreshold = 10
         self.model.metrics = self.initDicts()
         self.getMetrics()

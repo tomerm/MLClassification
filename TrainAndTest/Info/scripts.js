@@ -385,7 +385,7 @@ function buildModelsPage() {
     ch.className = "expanded bold";
     ch.colspan = keys.length + 1;
     tr.appendChild(ch);
-    for (i=12; i<24; i++) {
+    for (i=12; i<25; i++) {
         addModelsPageRaw(table, i);
     }
     tr = document.createElement("tr");
@@ -410,11 +410,11 @@ function addModelsPageRaw(table, ind) {
         "Actual labels", "Pedicted at all", "Predicted correctly", "Predicted falsely", "Not predicted",
         "Exact Match Ratio", "Accuracy", "Precision", "Recall", "F1-Measure", "Hamming Loss",
         "Macro-Averaged Precision", "Macro-Averaged Recall", "Macro-Averaged F1-Measure",
-        "Micro-Averaged Precision", "Micro-Averaged Recall", "Micro-Averaged F1-Measure"];
+        "Micro-Averaged Precision", "Micro-Averaged Recall", "Micro-Averaged F1-Measure", "Rank threshold"];
     let shortNames= ["d_docs", "dd_ex", "dd_cf", "dd_p", "dd_pf", "dd_f", "dd_n",
                      "d_actual", "d_predicted", "d_correctly", "d_falsely", "d_notPredicted",
                      "emr", "accuracy", "precision", "recall", "f1", "hl", "macroPrecision",
-                     "macroRecall", "macroF1", "microPrecision", "microRecall", "microF1"];
+                     "macroRecall", "macroF1", "microPrecision", "microRecall", "microF1", "rank"];
     let tr = document.createElement("tr");
     table.appendChild(tr);
     let ch = document.createElement("td");
@@ -426,7 +426,17 @@ function addModelsPageRaw(table, ind) {
             ch = document.createElement("td");
             ch.className = "digs";
             tr.appendChild(ch);
-            if (shortNames[i].startsWith("d"))
+            if (shortNames[i] == "rank") {
+                let rank = 0.5
+                if (fullData[key].hasOwnProperty("ranks"))
+                    rank = fullData[key]["ranks"][model];
+                if (!rank) {
+                    console.log("Rank is " + rank + " for model " + model);
+                    rank = 0.5
+                }
+                ch.innerHTML = (rank * 100).toFixed(2) + "%";
+            }
+            else if (shortNames[i].startsWith("d"))
                 ch.innerHTML = fullData[key]["models"][model]["all"][shortNames[i]];
             else if(shortNames[i].startsWith("hl"))
                 ch.innerHTML = fullData[key]["models"][model]["all"][shortNames[i]].toFixed(4);
@@ -437,7 +447,7 @@ function addModelsPageRaw(table, ind) {
 }
 
 function addModelsPageCatsRows(table, rows, arr) {
-    console.log("Rows: " + rows + ", keys: " + Object.keys(arr).length);
+    //console.log("Rows: " + rows + ", keys: " + Object.keys(arr).length);
     for (let i=0; i<rows; i++) {
         let tr = document.createElement("tr");
         table.appendChild(tr);
@@ -445,11 +455,11 @@ function addModelsPageCatsRows(table, rows, arr) {
         for (key in reqs) {
             for (model in fullData[key]["models"]) {
                 let keyArr = key + " | " + model;
-                console.log("Key: " + keyArr + ", cats: " + arr[keyArr].length);
+                //console.log("Key: " + keyArr + ", cats: " + arr[keyArr].length);
                 let td = document.createElement("td");
                 if (arr[keyArr].length - 1 >= i) {
                     let cat = arr[keyArr][i];
-                    console.dir(cat);
+                    //console.dir(cat);
                     td.innerHTML = "<div><table class='catstab'><tr>" +
                         "<td class='txt' style='overflow: hidden; white-space: nowrap; text-overflow: ellipsis;'>" +
                         cat["name"] + "</td>" +

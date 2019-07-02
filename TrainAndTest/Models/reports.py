@@ -8,6 +8,7 @@ class Report(object):
         self.categories = []
         self.docs = {}
         self.models = {}
+        self.ranks = {}
 
     def toJSON(self):
         obj = {}
@@ -18,4 +19,5 @@ class Report(object):
         obj["categories"] = self.categories
         obj["docs"] = self.docs
         obj["models"] = self.models
+        obj["ranks"] = self.ranks
         return obj
