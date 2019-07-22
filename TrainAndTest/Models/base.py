@@ -150,9 +150,15 @@ class BaseModel:
 
     def testSKLModel(self):
         print ("Start testing...")
-        print ("Model doesn't calculate probabilities.")
+        if self.useProbabilities:
+            print ("Rank threshold: %.2f" % (self.rankThreshold))
+        else:
+            print ("Model doesn't evaluate probabilities.")
         ds = datetime.datetime.now()
-        self.predictions = self.model.predict(self.testArrays)
+        if not self.useProbabilities:
+            self.predictions = self.model.predict(self.testArrays)
+        else:
+            self.predictions = self.model.predict_proba(self.testArrays)
         de = datetime.datetime.now()
         print("Test dataset containing %d documents predicted in %s" % (self.testArrays.shape[0], showTime(ds, de)))
         if self.isCV:
