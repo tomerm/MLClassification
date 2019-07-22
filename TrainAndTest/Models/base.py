@@ -185,7 +185,10 @@ class BaseModel:
     def saveResources(self, type):
         self.resources["modelPath"] = fullPath(self.Config, "modelpath", opt="name")
         self.resources["modelType"] = type
-        self.resources["rankThreshold"] = self.rankThreshold
+        if self.useProbabilities:
+            self.resources["rankThreshold"] = self.rankThreshold
+        else:
+            self.resources["rankThreshold"] = 1.0
         self.saveAdditions()
         if type == "skl":
             self.resources["handleType"] = "vectorize"
