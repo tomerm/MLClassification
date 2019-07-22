@@ -56,7 +56,7 @@ same, as target file (or folder) for _Preprocess_.
 
 Name | Possible values | Comments
 --- | --- | ---
-actualTocs | *yes*/no | 'yes' defines langiage-specific tokenization, no - simple white space tokenization
+actualToks | *yes*/no | 'yes' defines langiage-specific tokenization, no - simple white space tokenization
 sourcePath | <path> | Relative path to the folder or file, containing source data.
 targetPath | <path> | Relative path to the folder or file, which will contain results of tokenization
 taggerPath | <path> | Relative path to jar with tagger, which performs all preprocessing
@@ -137,6 +137,9 @@ cvSave | yes/no | Need to save datasets, correpond to the cross-validation cycle
 cvPath | <path> | Path to the folder containing datasets used in cross-validation cycle with the best results
 customRank | yes/no | Use default (0.5) or custom rank threshold
 rankThreshold | <=1.0 | Value of custom rank threshold
+
+_Note: Models PAC, Perceptron, Ridge and SVC don't return probabilities of predictions, so their results can't be
+controlled by `rankThreshold` option._
 
 ## Collector
 _Collector_ is a process which, if required, can perform the following tasks:
