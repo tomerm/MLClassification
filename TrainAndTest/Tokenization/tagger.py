@@ -30,7 +30,7 @@ class TokensFromTagger:
         srv = subprocess.Popen('java -Xmx2g -jar ' + taggerPath + ' "' + inPath +  '" "'  +
                                outPath + '" "' + Config["expos"] + '" "'+ stopWords + '" "' +
                                Config["extrawords"] + '" "' + Config["normalization"] + '" "' +
-                               Config["actualTocs"] + '"',
+                               Config["actualtoks"] + '"',
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         srv.wait()
         reply = srv.communicate()

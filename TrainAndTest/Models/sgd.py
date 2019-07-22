@@ -20,7 +20,7 @@ class SGDModel(BaseModel):
                 print ("Wrong path to vectorizer. Stop.")
                 Config["error"] = True
                 return
-        self.useProbabilities = False
+        self.useProbabilities = True
         self.handleType = "vectorize"
         if Config["runfor"] != "crossvalidation":
             self.prepareData()
@@ -33,7 +33,7 @@ class SGDModel(BaseModel):
 
     def createModel(self):
         return OneVsRestClassifier(SGDClassifier(loss='modified_huber', penalty='elasticnet',
-                                                 alpha=1e-4, max_iter=10, n_jobs=-1))
+                                                 alpha=1e-4, max_iter=10, tol=1e-3, n_jobs=-1))
 
     def loadModel(self):
         self.model = self.loadSKLModel()

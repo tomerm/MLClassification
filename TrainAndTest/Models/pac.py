@@ -32,7 +32,7 @@ class PacModel(BaseModel):
         dp.getDataForSklearnClassifiers()
 
     def createModel(self):
-        return OneVsRestClassifier(PassiveAggressiveClassifier(n_jobs=-1, max_iter=20))
+        return OneVsRestClassifier(PassiveAggressiveClassifier(n_jobs=-1, max_iter=20, tol=1e-3))
 
     def loadModel(self):
         self.model = self.loadSKLModel()
