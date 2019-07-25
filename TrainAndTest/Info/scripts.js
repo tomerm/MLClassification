@@ -618,15 +618,39 @@ function buildDocsPage() {
                     tdClass = "";
                 }
                 else {
+                    let fullList = fullData[key]["docs"][doc][model].split(" | ");
+                    let predList = fullList[0];
+                    let remList = "";
+                    if (fullList.length > 1)
+                        remList = fullList[1];
+
                     td.title = "Document:  " + doc + "\n" +
                         "Tagged by: " + fullData[key]["docs"][doc]["actual"] + "\n" +
-                        "Predicted:  " + fullData[key]["docs"][doc][model];
+                        //"Predicted:  " + fullData[key]["docs"][doc][model];
+                        "Predicted:  " + predList;
+                    if (remList != "") {
+                        td.title += "\n=== Other: ===";
+                        let rems = remList.split(",");
+                        let j = 0;
+                        for (let i=0; i<rems.length; i++) {
+                            if (rems[i] !== "") {
+                                j++;
+                                if (j%3 == 1)
+                                    td.title += "\n";
+                                td.title += rems[i];
+                                if (i < rems.length - 1)
+                                    td.title += ",";
+                            }
+                        }
+                    }
                     let acts = fullData[key]["docs"][doc]["actual"].split(",");
-                    let preds = fullData[key]["docs"][doc][model].split(",");
+                    //let preds = fullData[key]["docs"][doc][model].split(",");
+                    let preds = predList.split(",");
                     let lenPreds = preds.length == 1 && preds[0] == ""? 0 : preds.length;
                     let found = 0;
                     for (let i = 0; i<acts.length; i++) {
-                        if (fullData[key]["docs"][doc][model].indexOf(acts[i]) >=0 )
+                        //if (fullData[key]["docs"][doc][model].indexOf(acts[i]) >=0 )
+                        if (predList.indexOf(acts[i]) >=0 )
                             found++;
                     }
                     if (found == acts.length) {

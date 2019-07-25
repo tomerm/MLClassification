@@ -109,11 +109,14 @@ class Collector:
         for key, val in self.Config["results"].items():
             for i in range(len(val)):
                 labs = []
+                addLabs = []
                 for j in range(self.qLabs):
                     #if val[i][j] >= self.rankThreshold:
                     if val[i][j] >= self.Config["ranks"][key]:
                         labs.append("%s[%.2f]"%(cNames[j], val[i][j]))
-                report.docs[self.Config["testdocs"][i].name][key] = ",".join(labs)
+                    else:
+                        addLabs.append("%s[%.2f]"%(cNames[j], val[i][j]))
+                report.docs[self.Config["testdocs"][i].name][key] = ",".join(labs) + " | " + ",".join(addLabs)
         for key, val in self.Config["metrics"].items():
             report.models[key] = val
         for key, val in self.Config["ranks"].items():
