@@ -3,25 +3,28 @@ import glob
 import json
 import collections
 import webbrowser
+import logging
 from datetime import date, timedelta
-from Utils.utils import fullPath
+from Utils.utils import get_abs_path
+import General.settings as settings
+
+logger = logging.getLogger(__name__)
 
 class InfoCreator:
-    def __init__(self, Config):
-        print ("Start to create info...")
-        self.Config = Config
+    def __init__(self):
+        logger.info("Start to create info...")
         self.curDir = os.path.dirname(__file__)
         self.info = {}
         self.startId = "%d%0.2d%0.2d000000"%(date.today().year, date.today().month, date.today().day)
-        if self.Config["infofrom"] != "today":
-            arr = self.Config["infofrom"].split()
-            prevDays = int(arr[0])
-            startDay = date.today() - timedelta(days=prevDays)
-            self.startId = "%d%0.2d%0.2d000000" % (startDay.year, startDay.month, startDay.day)
-        self.path = fullPath(Config, "reportspath")
+        if settings.Config["info_from"] != "today":
+            arr = settings.Config["info_from"].split()
+            prev_days = int(arr[0])
+            start_day = date.today() - timedelta(days=prev_days)
+            self.startId = "%d%0.2d%0.2d000000" % (start_day.year, start_day.month, start_day.day)
+        self.path = get_abs_path(settings.Config, "reports_path")
         os.chdir(self.path)
         for f in glob.glob("*"):
-            resPath = self.path + "/" + f
+            res_path = self.path + "/" + f
             try:
                 ind = f.rindex(".")
             except ValueError:
@@ -29,22 +32,22 @@ class InfoCreator:
             key = f[:ind]
             if (key < self.startId):
                 continue
-            with open(resPath, 'r', encoding='utf-8') as json_file:
+            with open(res_path, 'r', encoding='utf-8') as json_file:
                 try:
                     self.info[key] = json.load(json_file)
                 except json.JSONDecodeError:
-                    print ("Warning: file %s doesn't have json format. Skipped."%(resPath))
+                    logger.warning("Warning: file %s doesn't have json format. Skipped." % res_path)
             json_file.close()
-        if len(self.info) == 0:
-            print ("Folder %s doesn't contain reports, created in required diapason of dates. Exit."%(self.path))
+        if not self.info:
+            logger.error("Folder %s doesn't contain reports, created in required diapason of dates. Exit." % self.path)
             return
         self.html = ""
         self.qReqs = 0
         self.footer = "</table></body></html>"
-        self.docsDict = self.getDocsDictionary()
-        self.createHtml()
+        self.docsDict = self.get_docs_dictionary()
+        self.create_html()
 
-    def getCssAndJs(self):
+    def get_css_and_js(self):
         css = ""
         funcjs = ""
         with open(self.curDir + "/scripts.js", 'r', encoding='UTF-8') as tc:
@@ -57,8 +60,8 @@ class InfoCreator:
         tc.close()
         return funcjs, css
 
-    def createHtml(self):
-        fjs, css = self.getCssAndJs()
+    def create_html(self):
+        fjs, css = self.get_css_and_js()
         self.html = "<!DOCTYPE html><html><head><meta charset='utf-8' />"
         self.html += "<style>" + css + "</style>"
         #self.html += "<link rel='stylesheet' type='text/css' href='%s/styles.css'>"%(self.curDir)
@@ -84,36 +87,35 @@ class InfoCreator:
             self.html += "id='chk_" + key + "' /></td>"
             self.html += "<td style='text-align: center' >" + key + "</td></tr>"
         self.html += "</table></div></div></td>"
-        self.html += "<td id='tdPage' style='height: 100%; min-height: 100%;'>" + self.createMainPage() + "</td></tr>"
+        self.html += "<td id='tdPage' style='height: 100%; min-height: 100%;'>" + self.create_main_page() + "</td></tr>"
         self.html += self.footer
         path = self.path + "/curInfo.html"
         with open(path, 'w', encoding='utf-8') as file:
             file.write(self.html)
         file.close()
-        print ("Launch report...")
+        logger.info("Launch report...")
         webbrowser.open(path)
 
-    def createMainPage(self):
+    def create_main_page(self):
         pages = ["Requests", "Models", "Categories", "Documents"]
-        mainHtml = "<div style='width:100%; height: 100%; min-height: 100%;'>"
-        mainHtml += "<ul class='menu' style='border-bottom: 2px solid black;'>"
-        for i in range(len(pages)):
-            mainHtml += "<li class='menu' id='%s' onclick='changePage(\"%s\")'>%s</li>"%("page" + pages[i], pages[i], pages[i])
-        mainHtml += "</ul><div id='mainPage' style='height:100%; min-height:100%; width: 100%; overflow: auto;'>"
-        mainHtml += "</div>"
-        return mainHtml
+        main_html = "<div style='width:100%; height: 100%; min-height: 100%;'>"
+        main_html += "<ul class='menu' style='border-bottom: 2px solid black;'>"
+        for p in pages:
+            main_html += "<li class='menu' id='%s' onclick='changePage(\"%s\")'>%s</li>" % ("page" + p, p, p)
+        main_html += "</ul><div id='mainPage' style='height:100%; min-height:100%; width: 100%; overflow: auto;'>"
+        main_html += "</div>"
+        return main_html
 
-    def getDocsDictionary(self):
-        print ("Read source files...")
+    def get_docs_dictionary(self):
+        logger.info("Read source files...")
         docs = collections.OrderedDict()
-        fcont = ""
         for key, val in self.info.items():
-            path = self.Config["home"] + "/" + self.info[key]["sourcesPath"]
+            path = settings.Config["home"] + "/" + self.info[key]["sourcesPath"]
             for pathf, subdirs, files in os.walk(path):
                 for doc in files:
                     if doc not in docs:
                         if not os.path.isfile(os.path.join(pathf, doc)):
-                            print ("File %s doesn't exist."%(path+doc))
+                            logger.warning("File %s doesn't exist."%(path+doc))
                             continue
                     #with open(os.path.join(pathf, doc), "r", encoding="utf-8") as file:
                     #    fcont = file.read()

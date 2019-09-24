@@ -1,0 +1,12 @@
+pytorch_pretrained_bert==0.4.0
+nltk
+torch 
+torchvision
+tensorflow
+keras
+sklearn
+gensim
+matplotlib
+stanfordnlp
+
+

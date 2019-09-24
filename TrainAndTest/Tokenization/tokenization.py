@@ -1,22 +1,22 @@
-from Tokenization.server import TokensFromServer
-from Tokenization.tagger import TokensFromTagger
-from Utils.utils import updateParams
+from Tokenization.server import tokens_from_server
+from Tokenization.tagger import tokens_from_tagger
+import General.settings as settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Tokenizer:
-    def __init__(self, Config, DefConfig, kwargs):
-        print ("=== Tokenization ===")
-        updateParams(Config, DefConfig, kwargs)
-        self.Config = Config
-        self.DefConfig = DefConfig
-        #if Config["actualtoks"] != "yes":
+    def __init__(self):
+        logger.info("=== Tokenization ===")
+        #if settings.Config["language_tokenization"] != "True":
         #    return
-        if len(Config["sourcepath"]) == 0 or Config["sourcepath"] == Config["targetpath"]:
-            print ("Wrong source/target path(s). Tokenization can't be done.")
-            Config["error"] = True
+        if not settings.Config["source_path"] or settings.Config["source_path"] == settings.Config["target_path"]:
+            logger.error("Wrong source/target path(s). Tokenization can't be done.")
+            #settings.Config["error"] = True
             return
-        if Config["typetoks"] == "server":
-            TokensFromServer(Config)
-        elif Config["typetoks"] == "tagger":
-            TokensFromTagger(Config)
+        if settings.Config["typetoks"] == "server":
+            tokens_from_server(settings.Config)
+        elif settings.Config["typetoks"] == "tagger":
+            tokens_from_tagger(settings.Config)
         else:
-            print ("Wrong tokenization type. Tokenization can't be done.")
+            logger.error("Wrong tokenization type. Tokenization can't be done.")

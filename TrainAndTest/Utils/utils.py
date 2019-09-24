@@ -1,21 +1,41 @@
+import os
+import logging
 
-def showTime(ds,de):
+logger = logging.getLogger(__name__)
+
+def get_formatted_date(ds,de):
     result = ''
     seconds = (de-ds).total_seconds()
     if seconds < 1:
         return "less than 1 sec"
-    hh = seconds//3600;
+    hh = seconds//3600
     if hh > 0:
-        result = "%d h:"%(hh);
+        result = "%d h:"%(hh)
     seconds = seconds%(3600)
-    mm = seconds//60;
+    mm = seconds//60
     if mm > 0:
         result += "%d min:"%(mm)
-    ss = seconds%60;
+    ss = seconds%60
     result += "%d sec"%(ss)
     return result
 
-def fullPath(Config, relPath, opt = ""):
+
+def test_path(Config, path, error_msg):
+    if not correct_path(Config, path):
+        raise ValueError(error_msg)
+
+
+def correct_path(Config, path):
+    if not path:
+        return False
+    if not Config[path]:
+        return False
+    if not os.path.exists(get_abs_path(Config, path)):
+        return False
+    return True
+
+''' get absolute path from Config property '''
+def get_abs_path(Config, relPath, opt=""):
     result = ""
     if relPath in Config:
         result =  Config["home"] + "/" + Config[relPath]
@@ -28,33 +48,28 @@ def fullPath(Config, relPath, opt = ""):
             result += "/" + opt
     return result
 
-def defaultOptions(parser, section):
-    DefConfig = {}
-    options = parser.items(section)
-    for i in range(len(options)):
-        DefConfig[options[i][0]] = options[i][1]
-    return DefConfig
-
-def updateParams(Config, DefConfig, kwargs):
-    if len(kwargs) == 0:  # Reset default values
+def updateParams(Config, def_config, kwargs):
+    if not kwargs:  # Reset default values
         return
     if "reset" in  kwargs.keys():
-        if kwargs["reset"] == "yes":
-            for option, value in DefConfig.items():
+        if kwargs["reset"] == "True":
+            for option, value in def_config.items():
                 Config[option] = value
-            print("Reset parameters")
+            logger.info("Reset parameters")
         del kwargs["reset"]
     if len(kwargs) > 0:
         for option, value in kwargs.items():
             Config[option] = value
-        print("Update parameters")
+        logger.info("Update parameters")
 
-def leftAlign(str, size):
+
+def align_to_left(str, size):
     if len(str) >= size:
         return str[:size]
     return str + "".join([" "] * (size - len(str)))
 
-def getDictionary():
+
+def arabic_charset():
     start = ord('\u0600')
     end = ord('\u06ff')
     alphabet = ''

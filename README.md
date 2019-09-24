@@ -9,11 +9,15 @@ High level overview of development environment is presented on the image shown b
 We are using RedHat Linux. For more details on the version please see the image below: 
 ![image](https://user-images.githubusercontent.com/5329257/46408850-31019880-c71c-11e8-97c3-6fe222f61317.png)
 
+The project was develped and tested using Jupyter on RedHat Linux with Python 3.6. However it was ported from Jupyter to stand-alone Python and should work on any platform.
+
+To set up Jupyter, follow these steps:
+
 1.	**Download Anaconda**
 
 Anaconda is a free and easy-to-use environment for scientific Python. 
 
-Download from  https://www.anaconda.com/download/#linux.  Use installer for Python version >= 3.6.
+Download from  https://www.anaconda.com/download/#linux. 
 
 2.	**Install Anaconda & Python**
 
@@ -30,11 +34,44 @@ See also http://docs.anaconda.com/anaconda/
 
 https://conda.io/docs/user-guide/tasks/manage-environments.html
 
-After creating the new environment, few mashin learning libraries should be installed.
 
-5.	**Install Mashin Learning Libraries**
+# Install Machine Learning Libraries**
 
-**TensorFlow** is a tool for machine learning. While it contains a wide range of functionality, TensorFlow is mainly designed for deep neural network models ("deep learning").
+After creating the new environment, few machine learning libraries should be installed.
+
+**Install pretrained bert
+`pip install pytorch-pretrained-bert`
+
+**Natural Language Toolkit** is a platform of work with human language data.
+
+`pip install nltk`
+
+Open the intrepreter and use the NLTK Downloader to obtain the resource:
+
+  >>> import nltk
+  >>> nltk.download('stopwords')
+or alternatively
+  python -m nltk.downloader stopwords
+
+  If you get CERTIFICATE_VERIFY_FAILED error, try to run the following first:
+  
+  `/Applications/Python 3.6/Install Certificates.command`
+
+  Put your version of Python instead of 3.6 if it differs.  This is Mac version, but for other platforms it should be similar.
+
+**PyTorch** is a tool for machine learning.
+
+To install a version without GPU support:
+
+`pip install torch torchvision`
+
+If you want to use GPU, the command will be different dependently on your platform and version.
+Look into the following link for the exact command:
+
+    https://pytorch.org/?utm_source=Google&utm_medium=PaidSearch&utm_campaign=%2A%2ALP+-+TM+-+General+-+HV+-+IL&utm_adgroup=Installing+PyTorch&utm_keyword=installing%20pytorch&utm_offering=AI&utm_Product=PyTorch&gclid=CjwKCAjwuqfoBRAEEiwAZErCsjorzL_2TSkO8kyBzwjHXz-L4j5F1ngbjr0c_7ga9YArasH47VI2hRoCgrsQAvD_BwE
+
+**TensorFlow** is another tool for machine learning. 
+While it contains a wide range of functionality, TensorFlow is mainly designed for deep neural network models ("deep learning").
 
 For installing TensorFlow, open Terminal to type the following commands.
 To install the CPU-only version of TensorFlow:
@@ -74,7 +111,21 @@ See https://pypi.org/project/gensim/
 
 See https://matplotlib.org/
 
-6.  **Jupyter notebook**
+**Stanford NLP** is a library used for natural languages procesing.  To install it, use:
+
+`pip install stanfordnlp`
+
+To download Arabic artifacts, open Python intepreter and execute:
+
+>>> import stanfordnlp
+>>> stanfordnlp.download('ar')
+
+** Alternatively the bunch installation may be performed by
+pip install -r requirements.txt
+Afterwards NLTK stopwords and Standford Arabic artifacts should be loaed as eleborated above.
+
+
+#  **Jupyter notebook**
 Python scripts in this project are presented in Jupyter Notebooks. Jupyter is automatically installed for base anaconda environment only. For each new envionment new install (from Navigator or from Teminal, using pip) is required.
 
 Launch notebook from example/notebooks to check, that development environment is set correctly.

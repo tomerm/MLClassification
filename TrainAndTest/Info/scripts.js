@@ -177,7 +177,7 @@ function buildReqsPage() {
     tr.appendChild(ch);
     for (key in reqs) {
         ch = document.createElement("td");
-        ch.innerHTML = fullData[key]["preprocess"]["actualtoks"];
+        ch.innerHTML = fullData[key]["preprocess"]["language_tokenization"];
         tr.appendChild(ch);
     }
     tr = document.createElement("tr");
@@ -199,7 +199,7 @@ function buildReqsPage() {
     tr.appendChild(ch);
     for (key in reqs) {
         ch = document.createElement("td");
-        ch.innerHTML = fullData[key]["preprocess"]["stopwords"];
+        ch.innerHTML = fullData[key]["preprocess"]["stop_words"];
         tr.appendChild(ch);
     }
     tr = document.createElement("tr");
@@ -210,7 +210,7 @@ function buildReqsPage() {
     tr.appendChild(ch);
     for (key in reqs) {
         ch = document.createElement("td");
-        ch.innerHTML = fullData[key]["preprocess"]["expos"] || "none";
+        ch.innerHTML = fullData[key]["preprocess"]["exclude_positions"] || "none";
         tr.appendChild(ch);
     }
     tr = document.createElement("tr");
@@ -221,7 +221,7 @@ function buildReqsPage() {
     tr.appendChild(ch);
     for (key in reqs) {
         ch = document.createElement("td");
-        ch.innerHTML = fullData[key]["preprocess"]["extrawords"] || "none";
+        ch.innerHTML = fullData[key]["preprocess"]["extra_words"] || "none";
         tr.appendChild(ch);
     }
     tr = document.createElement("tr");
@@ -426,7 +426,7 @@ function addModelsPageRaw(table, ind) {
             ch = document.createElement("td");
             ch.className = "digs";
             tr.appendChild(ch);
-            if (shortNames[i] == "rank") {
+             if (shortNames[i] == "rank") {
                 let rank = 0.5
                 if (fullData[key].hasOwnProperty("ranks"))
                     rank = fullData[key]["ranks"][model];
@@ -561,7 +561,8 @@ function addCatsPageRaws(table, category) {
                     if (shortNames[i].startsWith("d"))
                         td.innerHTML = fullData[key]["models"][model][category][shortNames[i]];
                     else
-                        td.innerHTML = (fullData[key]["models"][model][category][shortNames[i]]* 100).toFixed(2) + "%";
+                        td.innerHTML = (fullData[key]["models"][model][category][shortNames[i]]* 100)
+                            .toFixed(2) + "%";
                 }
                 else
                     td.innerHTML = "N/A";

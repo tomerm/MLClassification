@@ -1,14 +1,15 @@
 import numpy
 import matplotlib.pyplot as plt
 
-def showDocsByLength(Config):
-    trainDocs = Config["traindocs"]
-    testDocs = Config["testdocs"]
+
+def showDocsByLength(dynamic_store):
+    train_docs = dynamic_store["train_docs"]
+    test_docs = dynamic_store["test_docs"]
     fig, (plot1, plot2) = plt.subplots(1, 2, figsize=(10 ,6))
     dictLens = dict()
     dictLens1 = dict()
-    for i in range(len(trainDocs)):
-        lend = "%5d " %(len(trainDocs[i].words))
+    for doc in train_docs:
+        lend = "%5d " %(len(doc.words))
         if not lend in dictLens:
             dictLens[lend] = 1
         else:
@@ -20,8 +21,8 @@ def showDocsByLength(Config):
     plot1.set_ylabel("Documents")
     plot1.set_xlabel("Tokens")
     plot1.plot(lvars, locc, "b.-")
-    for i in range(len(testDocs)):
-        lend = "%5d " %(len(testDocs[i].words))
+    for doc in test_docs:
+        lend = "%5d " %(len(doc.words))
         if not lend in dictLens1:
             dictLens1[lend] = 1
         else:
@@ -36,15 +37,15 @@ def showDocsByLength(Config):
     plot2.plot(lvars1, locc1, "b.-")
     plt.show()
 
-def showDocsByLabs(Config):
-    trainDocs = Config["traindocs"]
-    testDocs = Config["testdocs"]
-    categories = Config["cats"]
+def showDocsByLabs(dynamic_store):
+    train_docs = dynamic_store["train_docs"]
+    test_docs = dynamic_store["test_docs"]
+    categories = dynamic_store["predefined_categories"]
     fig, (plot1, plot2) = plt.subplots(1, 2, figsize=(10 ,6))
     dictLabs = dict()
     dictLabs1 = dict()
-    for i in range(len(trainDocs)):
-        lab = "%5d " %(trainDocs[i].qLabs[0])
+    for doc in train_docs:
+        lab = "%5d " % doc.qLabs[0]
         if not lab in dictLabs:
             dictLabs[lab] = 1
         else:
@@ -57,8 +58,8 @@ def showDocsByLabs(Config):
     plot1.set_xlabel("Labels")
     plot1.set_xticks(numpy.arange(0, len(categories), step=1))
     plot1.plot(lvars1, locc1, "bo-")
-    for i in range(len(testDocs)):
-        lab = "%5d " %(testDocs[i].qLabs[0])
+    for doc in test_docs:
+        lab = "%5d " %(doc.qLabs[0])
         if not lab in dictLabs1:
             dictLabs1[lab] = 1
         else:

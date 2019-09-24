@@ -3,22 +3,22 @@ from nltk.corpus import stopwords
 from nltk.stem.util import suffix_replace
 
 
-def joinTokens(tArr, Config):
+def join_tokens(tArr, Config):
     toks = [x[0] for x in tArr]
     tags = [x[1] for x in tArr]
     result = ''
     normalizer = ArabicNormalizer()
-    if Config["stopwords"]:
-        stopWords = set(stopwords.words('arabic'))
+    if Config["stop_words"]:
+        stop_words = set(stopwords.words('arabic'))
     else:
-        stopWords = set()
-    exPos = Config["expos"].split(",")
-    exWords = Config["extrawords"].split(",")
+        stop_words = set()
+    exclude_positions = Config["exclude_positions"].split(",")
+    exWords = Config["extra_words"].split(",")
     for i in range(len(tArr)):
         ftok = ''
         if i > 0:
             result += ' '
-        if tags[i] in exPos or tags[i] in stopWords or tags[i] in exWords:
+        if tags[i] in exclude_positions or tags[i] in stop_words or tags[i] in exWords:
             continue
         else:
             ftok = toks[i]

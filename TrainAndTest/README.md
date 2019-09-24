@@ -8,7 +8,7 @@ configuration file with the list of predefined sections and options (as an examp
 Each user's request can be executed by launching script _start.py_ with one required parameter, which defines the path to 
 specific configuration file, for example:
 
-`python start.py config.cfg`
+`python start.py config.cfg` or `python start.py config.json'
 
 Content of the request should be placed into configuration file as a value of option _request_ from the section _requests_.
 
@@ -34,7 +34,7 @@ The rules of creating user's request are the following:
 
 Here is the example of the request:
 
-`request = D(w2vload=no) | M(type=perceptron; name=perceptron; runfor=test) | M(type=svc; name=svc) | C(saveResources=no)`
+`request = D(load_w2v_model=False) | M(type=perceptron; name=perceptron; type_of_execution=test) | M(type=svc; name=svc) | C(prepare_resources_for_runtime=False)`
 
 This means: 
 - load train and test data from default folders, but not load file of word vectors;
@@ -56,15 +56,15 @@ same, as target file (or folder) for _Preprocess_.
 
 Name | Possible values | Comments
 --- | --- | ---
-actualToks | *yes*/no | 'yes' defines langiage-specific tokenization, no - simple white space tokenization
-sourcePath | <path> | Relative path to the folder or file, containing source data.
-targetPath | <path> | Relative path to the folder or file, which will contain results of tokenization
-taggerPath | <path> | Relative path to jar with tagger, which performs all preprocessing
-rtTaggerPath | <path> | Relative path to jar with tagger, which performs tokenization only (used by DataLoader and in runtime)
-exPOS | PUNC,DT,IN,CD,PRP,RP,RB,W,PDT | List of POS's, which should be excluded from results of tokenization.
-normalization | yes/no | Defines the need in text normalization
-stopWords | yes/no | Defines the need to exclude stop words from results of tokenization.
-extraWords | <list> / empty | List of extra words, which should be excluded from results of tokenization.
+language_tokenization | *True*/False | 'True' defines langiage-specific tokenization, False - simple white space tokenization
+source_path | <path> | Relative path to the folder or file, containing source data.
+target_path | <path> | Relative path to the folder or file, which will contain results of tokenization
+set_of_docs_lang_tokenization_lib_path | <path> | Relative path to jar with tagger, which performs all preprocessing
+single_doc_lang_tokenization_lib_path | <path> | Relative path to jar with tagger, which performs tokenization only (used by DataLoader and in runtime)
+exclude_positions | PUNC,DT,IN,CD,PRP,RP,RB,W,PDT | List of POS's, which should be excluded from results of tokenization.
+normalization | True/False | Defines the need in text normalization
+stop_words | True/False | Defines the need to exclude stop words from results of tokenization.
+extra_words | <list> / empty | List of extra words, which should be excluded from results of tokenization.
 
 _Note: 'list' can be empty, but if it contains few items, they should be separated by comma without spaces._
 
@@ -78,13 +78,13 @@ _WordEmbedding_ is a process, used to create new W2V model and save it into the 
 
 Name | Possible Values | Comments
 --- | --- | ---
-w2vCreate | yes/*no* | If 'yes', new W2V model will be created. Use 'no', if you need change some parameters only.
-w2vCorpusPath | <path> | Relative path to the file, containing text corpus.
-w2vEpochs | 100 | Number of epochs in training W2V model
-w2vDim | 100 | Dimension of created word vectors
-w2vModelPath | <path> | Relative path to W2V model (file with word vectors)
+need_create_model | True/*False* | If 'True', new W2V model will be created. Use 'False', if you need change some parameters only.
+data_corpus_path | <path> | Relative path to the file, containing text corpus.
+epochs_total | 100 | Number of epochs in training W2V model
+vectors_dimension | 100 | Dimension of created word vectors
+model_path | <path> | Relative path to W2V model (file with word vectors)
 
-_Note: 'w2vDim' and 'w2vModelPath' can be used by other processes, which need word embedding._
+_Note: 'vectors_dimension' and 'model_path' can be used by other processes, which need word embedding._
 
 ## Data Loading
 _DataLoader_ load all data, needed for training and testing models (including W2V data, if required). All this is placed into 
@@ -97,14 +97,14 @@ _Note: per-line preprocessing significantly slows down the data loading._
 
 Name | Possible Values | Comments
 --- | --- | ---
-trainPath | <path> | Relative path to the folder, containing train or all data.
-testPath | <path> / empty | Relative path to the folder, containing test data
-testSize | 0 | Size of test data set as a part of train data set (used if testPath is empty).
-valSize | 0.15 | Size of validation data set as a part of train data set.
-exCats | <list> / empty | List of categories, which should be excluded from training and testing.
-analysis | *yes*/no | Defines the need to show data set analysis.
-w2vLoad | *yes*/no | Defines if W2V model should be loaded.
-dataToks | yes/no | Defines if data should be preprocessed.
+train_data_path | <path> | Relative path to the folder, containing train or all data.
+test_data_path | <path> / empty | Relative path to the folder, containing test data
+test_data_size | 0 | Size of test data set as a part of train data set (used if test_data_path is empty).
+validation_data_size | 0.15 | Size of validation data set as a part of train data set.
+exclude_categories | <list> / empty | List of categories, which should be excluded from training and testing.
+analysis | *True*/False | Defines the need to show data set analysis.
+load_w2v_model | *True*/False | Defines if W2V model should be loaded.
+enable_tokenization | True/False | Defines if data should be preprocessed.
 
 _Note: If W2V model will not be loaded by _DataLoader_, it will be loaded and placed into the internal cache by first 
 in the chain _Model_ process, which require word embedding._
@@ -119,27 +119,22 @@ Name | Possible Values | Comments
 --- | --- | ---
 type |   | Type of the model. One of SNN, LTSM, CNN, PAC, Perceptron, Ridge, SGD, SVC, BERT
 name |   | Name of the model (e.g., name of the file, containing model)
-modelPath | <path> | Relative path to the folder, containing models
-runFor |   | Type of execution. One of trainAndTest, train, test, crossValidation and none.
+created_model_path | <path> | Relative path to the folder, containing models
+type_of_execution |   | Type of execution. One of trainAndTest, train, test, crossValidation and none.
 epochs | 15 | Number of epochs in model's training. Depends on specific model.
-trainBatch | 128 | Batch size for training.
+train_batch | 128 | Batch size for training.
 verbose | 0/1 | Logging level in model's training
-tempSave | yes/no | Defines the need to save intermediate results in the process of model's training
-tempPath | <path> | Relative path to the folder, containing intermediate results.
-indexerPath | <path> | Relative path to indexer (saved with some specific models)
-binarizerPath | <path> | Relative path to binarizer (saved with some specifc models)
-vectorizerPath | <path> | Relative path to vectorizer (saved with some specific models)
-bertPath | <.../pytorch_bert.gz> | Relative path to the gz file, containing pre-trained BERT model
-bertOutPath | <path> | Path to the folder with resulting BERT files
-showMetrics | yes/no | Need to show testing results (model's metrics) 
-kfold | 10 | Number of cross-validation cycles
-cvSave | yes/no | Need to save datasets, correpond to the cross-validation cycle with the best results
-cvPath | <path> | Path to the folder containing datasets used in cross-validation cycle with the best results
-customRank | yes/no | Use default (0.5) or custom rank threshold
-rankThreshold | <=1.0 | Value of custom rank threshold
-
-_Note: Models PAC, Perceptron, Ridge and SVC don't return probabilities of predictions, so their results can't be
-controlled by `rankThreshold` option._
+save_intermediate_results | True/False | Defines the need to save intermediate results in the process of model's training
+intermediate_results_path | <path> | Relative path to the folder, containing intermediate results.
+indexer_path | <path> | Relative path to indexer (saved with some specific models)
+binarizer_path | <path> | Relative path to binarizer (saved with some specifc models)
+vectorizer_path | <path> | Relative path to vectorizer (saved with some specific models)
+pretrained_bert_model_path | <.../pytorch_bert.gz> | Relative path to the gz file, containing pre-trained BERT model
+resulting_bert_files_path | <path> | Path to the folder with resulting BERT files
+show_test_results | True/False | Need to show testing results (model's metrics) 
+cross_validations_total | 10 | Number of cross-validation cycles
+save_cross_validations_datasets | True/False | Need to save datasets, correpond to the cross-validation cycle with the best results
+cross_validations_datasets_path | <path> | Path to the folder containing datasets used in cross-validation cycle with the best results
 
 ## Collector
 _Collector_ is a process which, if required, can perform the following tasks:
@@ -151,21 +146,19 @@ _Collector_ is a process which, if required, can perform the following tasks:
 
 Name | Possible Values | Comments
 --- | --- | ---
-showResults | yes/no | Show consolidated results
-reports | yes/no | Calculate and save reports (as a files in json format)
-reportsPath | <path> | Path to the folder containing reports
-saveResources | yes/no | Collect artifacts for runtime
-resourcesPath | <path> | Path to the folder containing collected artifacts. Content of this folder should be copied into folder /app/resources belonging to repository MLClassificationDocker.
-consolidatedRank | yes/no | Use default (0.5) or custom rank for consolidated results
-consolidatedRankThreshold | <=1.0 | Value of custom rank threshold for consolidated results
+show_consolidated_results | True/False | Show consolidated results
+save_reports | True/False | Calculate and save reports (as a files in json format)
+reports_path | <path> | Path to the folder containing reports
+prepare_resources_for_runtime | True/False | Collect artifacts for runtime
+saved_resources_path | <path> | Path to the folder containing collected artifacts. Content of this folder should be copied into folder /app/resources belonging to repository MLClassificationDocker.
 
 _Note: folder `resourcePath` will contain only those resources, which belong to the model(s), tested in the current pipe. Resources, used by models in cross-validation mode, aren't saved._
 
 ## Show and compare results of user's requests
 Results of user's requests, previously created and saved by the process _Collector_, can be converted into HTML form and shown by  the script _info.py_, launched with one required parameter - path to specific configuration file, for example:
 
-`python info.py config.cfg`
+`python info.py config.cfg` or `python info.py config.json`
 
-In general it is the same configuration file, which was used by the script `start`. Data needed for `info.py`, should be placed there as a value of the option _infofrom_ from the section _requests_. This option defines the period, in which requests were created, and may contain or word "today", or text in the form `X days`, here X is any number.    
+In general it is the same configuration file, which was used by the script `start`. Data needed for `info.py`, should be placed there as a value of the option _info_from_ from the section _requests_. This option defines the period, in which requests were created, and may contain or word "today", or text in the form `X days`, here X is any number.    
 
 Example of resulting HTML file (`curInfo.html`) can be found in the current folder.

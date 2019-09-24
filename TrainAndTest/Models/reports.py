@@ -1,7 +1,7 @@
 
 class Report(object):
     def __init__(self):
-        self.requestId = "";
+        self.requestId = ""
         self.sourcesPath = ""
         self.datasetPath = ""
         self.preprocess = {}
@@ -10,7 +10,7 @@ class Report(object):
         self.models = {}
         self.ranks = {}
 
-    def toJSON(self):
+    def to_json(self):
         obj = {}
         obj["requestId"] = self.requestId
         obj["sourcesPath"] = self.sourcesPath

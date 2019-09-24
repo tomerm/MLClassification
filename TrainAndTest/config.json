@@ -1,0 +1,71 @@
+{
+    "root": {
+        "home": "/home/user/PROJECTS",
+        "show_plots": "False"
+    },
+    "preprocess": {
+        "use_java": "True",
+        "language_tokenization": "True",
+        "source_path": "MLClassificationData/bbcnews",
+        "target_path": "MLClassificationData/bbcnews3",
+        "set_of_docs_lang_tokenization_lib_path": "MLClassification/tokenizer/arabic/stanford/taggers/PyArabicTokenizer.jar",
+        "single_doc_lang_tokenization_lib_path": "MLClassification/tokenizer/arabic/stanford/taggers/ArabicDocumentsTokenizer.jar",
+		"exclude_positions": "PUNC,DT,IN,CD,PRP,RP,RB,W,PDT",
+        "normalization": "True",
+        "stop_words": "True",
+        "normalization": "True"
+    },
+    "word_embedding": {
+        "need_create_model": "True",
+        "data_corpus_path": "MLClassificationData/w2v/target/wiki_ar.txt",
+        "vectors_dimension": "100",
+        "epochs_total": "40",
+        "include_current_time_in_model_name": "False",
+        "model_path": "MLClassificationData/w2v/vectors/W2VModel.vec"
+    },
+    "data": {
+        "train_data_path": "MLClassificationData/train/rtanews/target",
+        "test_data_path": "MLClassificationData/test/rtanews/target",
+        "test_data_size": "0",
+        "validation_data_size": "0.15",
+        "analysis": "False",
+        "load_w2v_model": "True",
+        "enable_tokenization": "False",
+        "actual_path": "MLClassificationData/test/rtanews/source"
+    },
+    "model": {
+        "type": "snn",
+        "epochs": "20",
+        "train_batch": "128",
+        "test_batch": "8",
+        "verbose": "1",
+        "save_intermediate_results": "True",
+        "intermediate_results_path": "MLClassificationData/models/temp",
+        "created_model_path": "MLClassificationData/models",
+        "indexer_path": "MLClassificationData/indexers/indexer.pkl",
+        "binarizer_path": "MLClassificationData/indexers/mlb.pkl",
+        "vectorizer_path": "MLClassificationData/indexers/wev.pkl",
+        "pretrained_bert_model_path": "MLClassificationData/pybert/pytorch_bert.gz",
+        "resulting_bert_files_path": "MLClassificationData/pybert/out",
+        "type_of_execution": "trainandtest",
+        "cross_validations_total": "2",
+        "save_cross_validations_datasets": "True",
+        "cross_validations_datasets_path": "MLClassificationData/crossValidation",
+        "show_test_results": "True",
+        "customrank": "True",
+        "rank_threshold": "0.5"
+    },
+    "collector": {
+        "show_consolidated_results": "False",
+        "save_reports": "True",
+        "reports_path": "MLClassificationData/reports",
+        "prepare_resources_for_runtime": "True",
+        "saved_resources_path": "MLClassificationData/runtime",
+        "consolidatedrank": "True",
+        "consolidated_rank_threshold": "0.5"
+    },
+    "requests": {
+        "request": "D(load_w2v_model=True;enable_tokenization=True)|M(type=svc;name=svc;type_of_execution=trainandtest)|C()",
+		"info_from": "60 days"
+    }
+}
